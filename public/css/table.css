@@ -1,0 +1,245 @@
+/* ===== base ===== */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+/* ===== layout ===== */
+.table-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+
+/* ===== header ===== */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* ===== items ===== */
+.items {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 200px;
+}
+
+.items ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.items li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.items li.added {
+  color: #0167c0;
+}
+
+.items li.printed {
+  color: #2b372c;
+}
+
+.items li.precheck {
+  color:#e41717
+}
+
+.items li:last-child {
+  border-bottom: none;
+}
+
+/* ===== actions ===== */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-add {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.btn-print {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.btn-close {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.btn-exit {
+  background-color: #bdc3c7;
+  color: #333;
+}
+
+
+/* таблица от дипсика */ 
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-family: sans-serif;
+}
+
+.items-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+
+.items-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.items-table tfoot td {
+  padding: 10px;
+  border-top: 2px solid #333;
+  font-weight: bold;
+}
+
+.total-label {
+  text-align: right;
+}
+
+.total-value {
+  color: #2c3e50;
+}
+
+/* Стили для статусов (как у тебя в коде) */
+.items-table tr.added {
+  background-color: #47b4e7;
+}
+
+.items-table tr.printed {
+  background-color: #b7b5b0;
+}
+
+.items-table tr.precheck {
+  background-color: #d87483;
+}
+
+/* Убираем старые стили для ul, если они были */
+.items ul {
+  display: none; /* скрываем старый список */
+}
+
+
+/* меню 
+
+/* ===== layout (NEW) ===== */
+.layout {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* чтобы твой контейнер стал левой колонкой */
+.table-container {
+  flex: 2;
+  margin: 0; /* убираем авто-центрирование */
+}
+
+/* ===== menu (NEW) ===== */
+.menu-container {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* категории */
+#categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.category-btn {
+  padding: 8px 12px;
+  background: #ecf0f1;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.category-btn:hover {
+  background: #dcdde1;
+}
+
+.category-btn.active {
+  background: #2c3e50;
+  color: white;
+}
+
+/* блюда */
+#menuItems {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* карточка блюда */
+.menu-item {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #f0f0f0;
+  transform: scale(1.02);
+}
+
+.menu-item-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.menu-item-price {
+  font-size: 13px;
+  color: #666;
+}

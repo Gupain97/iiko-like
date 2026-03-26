@@ -1,0 +1,101 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: #f2f2f2;
+}
+
+.header {
+  height: 60px;
+  background: #2f3b52;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+#logoutBtn {
+  background: #d9534f;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.layout {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+.sidebar {
+  width: 220px;
+  background: #1f2937;
+  color: white;
+  padding: 15px;
+}
+
+.current-user {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.staff-item {
+  padding: 10px;
+  background: #374151;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.staff-item.active {
+  background: #2563eb;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}
+
+.tables {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.table-cell {
+  background: white;
+  border: 2px solid #ccc;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  color: black;
+}
+
+.table-cell.occupied {
+  background-color: #ce3732;
+  color: white;
+}
+
+.table-cell.open {
+  background-color: #3b82f6; /* синий */
+}
+.table-cell.printed {
+  background-color: #04952d; /* зеленый */
+}
+
+.table-cell.prechecked {
+  background-color: #ef4444; /* красный */
+}
+
+.table-cell.default {
+  background-color: #fbfbfb; /* красный */
+}
+

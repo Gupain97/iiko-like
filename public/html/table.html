@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link rel="stylesheet" href="/css/table.css" />
+  <meta charset="UTF-8" />
+  <title>Стол</title>
+</head>
+<body>
+
+
+<div class = "layout">
+  <div class="table-container">
+
+    <div class="table-header">
+      <h1>Стол № <span id="tableNumber"></span></h1>
+      <h3>Официант: <span id="userName"></span></h3>
+    </div>
+
+    <div class="items">
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+            <th>Время</th>
+        </tr>
+        </thead>
+        <tbody id="itemsList">
+        <!-- Сюда будут добавляться строки -->
+      </tbody>
+    </table>
+    </div>
+    <div id="orderTotal"></div>
+
+
+    <div class="actions">
+    <!--  <button id="addItemBtn" class="btn-add">Добавить позицию</button>-->
+      <button id="printOrderBtn" class="btn-print">Печать</button>
+      <button id="precheckOrder" class="btn-close">Пречек</button>
+      <button id="closeTableBtn" class="btn-close">Закрыть стол</button>
+      <button id="openTableBtn" class='btn-add'>Открыть стол</button>
+
+      <button id="exitTableBtn" class="btn-exit">Назад</button>
+    </div>
+
+  </div>
+
+  <div class="menu-container">
+    <div id="categories"></div>
+    <div id="menuItems"></div>
+  </div>
+
+
+    <script src="/js/table.js"></script>
+</div>
+</body>
+</html>
+

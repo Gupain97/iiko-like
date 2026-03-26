@@ -1,0 +1,11 @@
+/* base.css */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #1e1e1e;
+  color: white;
+}

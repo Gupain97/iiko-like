@@ -1,0 +1,35 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pin-display {
+  font-size: 32px;
+  margin-bottom: 20px;
+  letter-spacing: 8px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+}
+
+.key {
+  height: 60px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.key.enter {
+  background: #2563eb;
+  color: white;
+}
+
+.key.clear {
+  background: #d9534f;
+  color: white;
+}
