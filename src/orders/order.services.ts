@@ -1,6 +1,6 @@
 //import { orders } from './order.storage'
 import { NewOrder, Order, OrderItem } from './order.types'
-import { mapOrderItemToDTO, mapOrderToDTO, mapRowOrder } from './order.mapper';
+import { mapOrderItemToDTO, mapOrderToDTO, mapRowOrder, mapOrderWithItemsAndName, mapOrderWithNameToDTO } from './order.mapper';
 import { OrderDTO, OrderItemDTO, OrderWithNameDTO} from './order.dto';
 import { OrderStatus } from '../domain/orderStatus';
 
@@ -34,8 +34,9 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     const existingOrder = await findOrderByTableRepo(tableId);
  
     if (existingOrder && ACTIVE_STATUSES.includes(existingOrder.status)) {
+        console.log('exOrder', existingOrder);
         
-        return mapOrderToDTO(existingOrder);
+        return mapOrderWithNameToDTO(existingOrder);
     }
       
     const existingTable = await findTableByTableIdRepo(tableId);
@@ -62,7 +63,7 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     const retOrder = await findOrderByTableRepo(tableId);
     if (!retOrder) throw new Error('FUCKING_SHIT');
     
-    return mapOrderToDTO(retOrder);
+    return mapOrderWithNameToDTO(retOrder);
 }
 
 

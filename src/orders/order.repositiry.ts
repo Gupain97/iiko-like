@@ -110,7 +110,7 @@ export async function findOrderByTableRepo(tableid: number ) : Promise<OrderView
             `, [tableid]
 
     );
-    console.log(result.rows);
+    console.log('result rows', result.rows);
 
     return mapOrderWithItemsAndName(result.rows);
 }

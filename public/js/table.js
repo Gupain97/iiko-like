@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let allItems = [];
   let currentOrder = null;
-  let activeUser = null;
+  let waiter = null;
  // let tableIsOpen = false;
 
 
@@ -31,9 +31,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const categoriesEl = document.getElementById("categories");
   const menuItemsEl = document.getElementById("menuItems");
+  const waiterNameEl = document.getElementById('waiterName');
 
-  document.getElementById('userName').textContent =
-    `${user.name} ${user.surname}`;
+  // document.getElementById('userName').textContent =
+  //   `${user.name} ${user.surname}`;
 
   tableNumberEl.textContent = tableId;
 
@@ -147,6 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       if (!res.ok) {
         const data = await res.json();
+        console.log('data', data);
         if (data.message==="GUEST_COUNT_REQUIRED!"){
           tableNumber = Number(prompt('Введите номер стола'));
           guestsCount = Number(prompt("Введите кол-во гостей"));
@@ -167,8 +169,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
       
       currentOrder = await res.json();
-      console.log(currentOrder);
- 
+      waiterNameEl.textContent = currentOrder.waiterName + ' ' +  currentOrder.waiterSurname;
       await renderOrder();
  
     } catch (err) {
