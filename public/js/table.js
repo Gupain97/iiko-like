@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let allItems = [];
   let currentOrder = null;
-  let waiter = null;
  // let tableIsOpen = false;
 
 
@@ -195,8 +194,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert(data.message);
         return;
       }
-
-      // ❗ ВАЖНО: не дергай loadOrCreateOrder
       currentOrder = await res.json();
 
       await renderOrder();

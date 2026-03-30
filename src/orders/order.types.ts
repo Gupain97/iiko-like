@@ -25,20 +25,3 @@ export interface OrderItem {
     printed : boolean,
     printedAt : Date | null,
 }
-
-export interface OrderView {
-    id: number,
-    userId: number,
-
-    waiterName: string,
-    waiterSurName: string, 
-
-    status: OrderStatus,
-    tableId: number,
-    tableNumber: number | undefined,
-    guestsCount: number | undefined, 
-    createdAt: Date,
-    precheckAt: Date | null,
-    closedAt: Date | null,
-    items: OrderItem[],
-}

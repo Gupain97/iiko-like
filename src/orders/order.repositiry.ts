@@ -1,10 +1,11 @@
 import { pool } from "../config/db";
 
-import { Order, OrderItem, NewOrder, OrderView} from "./order.types";
+import { Order, OrderItem, NewOrder } from "./order.types";
 import { orders } from "./order.storage"; 
 import { getActiveOrders } from "./order.services";
 import { getItemsByOrderIdRepo } from "../order-items/orderItems.repository";
-import { mapOrderWithItems, mapOrderWithItemsAndName, mapRowOrder } from "./order.mapper";
+import { mapOrderWithItems,  mapRowOrder } from "./order.mapper";
+import { OrderWithNameRow } from "./order.raw.types";
 
 
 export let orderIdSeq = 1;
@@ -18,7 +19,7 @@ export function getNextOrderItemsIdSeq(): number {
     return orderItemsIdSeq++;
 }
 
-export async function findOrderByOrderIdRepo(orderId: number) : Promise<Order | undefined> {
+export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWithNameRow[] | undefined> {
 
 
 
@@ -55,7 +56,7 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<Order | 
     );
  
 
-    return mapOrderWithItemsAndName(result.rows);
+    return result.rows;
 
 }
 
@@ -76,7 +77,7 @@ export async function getAllOrdersRepo() : Promise<Order[]> {
     // }));
     return result.rows.map(mapRowOrder);
 }
-export async function findOrderByTableRepo(tableid: number ) : Promise<OrderView | undefined> {
+export async function findOrderByTableRepo(tableid: number ) : Promise<OrderWithNameRow[] > {
 
     const result = await pool.query(
         `SELECT
@@ -98,8 +99,8 @@ export async function findOrderByTableRepo(tableid: number ) : Promise<OrderView
             oi.printed,
             oi.printed_at,
 
-            ou.name AS user_name,
-            ou.surname
+            ou.name AS waiter_name,
+            ou.surname AS waiter_surname
             
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
@@ -112,7 +113,7 @@ export async function findOrderByTableRepo(tableid: number ) : Promise<OrderView
     );
     console.log('result rows', result.rows);
 
-    return mapOrderWithItemsAndName(result.rows);
+    return result.rows;
 }
 
 

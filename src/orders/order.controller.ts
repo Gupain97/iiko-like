@@ -52,13 +52,12 @@ export const addItemToOrderControllerNew = async (req:Request, res: Response) =>
 }
 
 export const printOrderController = async (req: Request, res: Response) => {
-    try {
+ 
         const orderId = Number(req.body.orderId);
         const printedOrder = await printOrder(orderId);
+        console.log('printedOrderController',printedOrder)
         res.json(printedOrder);
-    } catch (err) {
-        res.status(400).json({message: (err as Error).message});
-    }
+ 
 }
 
 // export const getOrderByIdController = (req: Request, res: Response) => {

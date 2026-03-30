@@ -1,6 +1,7 @@
-import { Order, OrderItem, OrderView } from "./order.types";
+import { Order, OrderItem } from "./order.types";
 import { OrderDTO, OrderItemDTO, OrderWithNameDTO } from "./order.dto";
 import { OrderRow } from "./order.db.types";
+import { OrderWithNameRow } from "./order.raw.types";
 
 
 export function mapOrderToDTO(order: Order): OrderDTO{
@@ -22,39 +23,13 @@ export function mapOrderToDTO(order: Order): OrderDTO{
     }
 }
 
-////////////////////////////////////////////////
-
-export function mapOrderWithNameToDTO(order: OrderView): OrderWithNameDTO | undefined {
-    const items = order.items ?? [];
-
-    return {
-        id: order.id,
-        tableNumber: order.tableNumber,
-        waiterName: order.waiterName,
-        waiterSurname: order.waiterSurName,
-        guestsCount: order.guestsCount,
-        status: order.status,
-        tableId: order.tableId,
-        items: items.map(mapOrderItemToDTO),
-        total: items.reduce(
-            (sum, i) => sum + i.price * i.quantity, 0
-        ),
-        createdAt: order.createdAt,
-        precheckAt: order.precheckAt,
-        closedAt: order.closedAt,
-    }
-}
-
-///////////////////////////////////////////////
-
-
 export function mapOrderItemToDTO(item: OrderItem): OrderItemDTO {
     return {
         id: item.id,
         name: item.name,
-        price: item.price,
+        price: item.price / 100,
         quantity: item.quantity,
-        total: item.price * item.quantity,
+        total: item.price * item.quantity ,
         printed: item.printed,
         printedAt: item.printedAt,
 
@@ -77,7 +52,7 @@ export function mapRowOrder(row: OrderRow): Order {
     }
 }
 
-export function mapOrderWithItems(rows: any[]) : Order | undefined {
+export function mapOrderWithItems(rows: OrderWithNameRow[]) : Order | undefined {
 
     if (rows.length === 0) return undefined; 
 
@@ -123,45 +98,49 @@ export function mapOrderWithItems(rows: any[]) : Order | undefined {
 
 //////////////////////////////////////////////
 
-export function mapOrderWithItemsAndName(rows: any[]) : OrderView | undefined {
+export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | undefined {
 
     if (rows.length === 0) return undefined; 
 
     const first = rows[0];
+    console.log('first', first);
 
-    const order : OrderView = {
+    const order : OrderWithNameDTO = {
         id: first.order_id,
         status: first.status,
         tableId: first.table_id,
-        userId: first.created_by,
-        waiterName: first.user_name,
-        waiterSurName: first.surname,
+        waiterName: first.waiter_name,
+        waiterSurname: first.waiter_surname,
         tableNumber: first.table_number,
         guestsCount: first.guests_count,
         createdAt: first.created_at,
         precheckAt: first.prechecked_at,
         closedAt: first.closed_at,
+        total: 0,
         
-
-        items: []
+        
+        items: [],
     };
 
     for (const row of rows) {
          if (row.item_id) {
+            const itemTotal = row.price / 100 * row.quantity;
+            order.total += itemTotal;
             order.items.push({
                  
                  id: row.item_id,
-                 orderId: row.order_item_order_id,
                  name: row.item_name,
                  quantity: row.quantity,
-                 price: row.price,
+                 price: row.price / 100,
                  printed: row.printed,
-                 printedAt: row.printed_at
+                 printedAt: row.printed_at,
+                 total: (row.quantity * row.price) / 100
 
 
                 });
             }
     }
+    console.log('mapFullOrderDTO', order);
  
 
     return order;
