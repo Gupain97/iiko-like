@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getTablesController, closeTableController, getTableByIdController, setGuestsController} from './tables.controller';
-import { asyncHandler } from '../middlewares/asyncHandler';
-import { validateOpenTable } from '../middlewares/validateOpenTable';
+import { asyncHandler } from '../../middlewares/asyncHandler';
+import { validateOpenTable } from '../../middlewares/validateOpenTable';
 
 const router = Router(); 
 

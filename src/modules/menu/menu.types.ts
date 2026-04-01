@@ -6,3 +6,5 @@ export interface MenuItem {
     categoryId: number
 
 }
+
+export type NewMenuItem =  Omit<MenuItem, 'id'> ;

@@ -1,4 +1,4 @@
-import { pool } from "../config/db";
+import { pool } from "../../config/db";
 
 import { Order, OrderItem, NewOrder } from "./order.types";
 import { orders } from "./order.storage"; 
@@ -19,7 +19,7 @@ export function getNextOrderItemsIdSeq(): number {
     return orderItemsIdSeq++;
 }
 
-export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWithNameRow[] | undefined> {
+export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWithNameRow[]> {
 
 
 
@@ -135,14 +135,14 @@ export async function saveOrderRepo(order: NewOrder) {
             order.tableNumber
         ]
     );
-    return result.rows[0];
+    return result.rows;
 }
 
 export async function updateStatusOrderRepo(orderId: number, status: ('PRECHECK' | 'OPEN' | 'CLOSED')) {
     const result = await pool.query(
         `UPDATE orders SET status = $1 WHERE id = $2 RETURNING *`,[status, orderId]
     );
-    return result.rows[0];
+    return result.rows;
 }
 
 export async function precheckOrderRepo(orderId: number) {

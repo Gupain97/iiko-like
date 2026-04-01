@@ -2,7 +2,7 @@
 import { NewOrder, Order, OrderItem } from './order.types'
 import { mapOrderItemToDTO, mapOrderToDTO, mapRowOrder, mapOrderFullDTO, mapOrderWithItems } from './order.mapper';
 import { OrderDTO, OrderItemDTO, OrderWithNameDTO} from './order.dto';
-import { OrderStatus } from '../domain/orderStatus';
+import { OrderStatus } from '../../domain/orderStatus';
 
 import { findOrderByOrderIdRepo,
      findOrderByTableRepo,
@@ -15,7 +15,7 @@ import { findOrderByOrderIdRepo,
         } from './order.repositiry';
 import { findTableByTableIdRepo } from '../tables/tables.repository'
 import { openTable } from '../tables/tables.services';
-import { AppError } from '../errors/AppErrors';
+import { AppError } from '../../errors/AppErrors';
 import { addItemRepo, markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { findItemByIdRepo } from '../menu/menu.repository';
 
@@ -68,15 +68,16 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
 }
 
 export async function addItemFromDB(orderId: number, itemId: number) : Promise<OrderDTO | undefined> {
-    const order = await findOrderByOrderIdRepo(orderId);
+    const existingOrder = await findOrderByOrderIdRepo(orderId)
+    const order = mapOrderWithItems(existingOrder);
     const itemData = await findItemByIdRepo(itemId);
     
     if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");
-    if (order[0].status !== "OPEN") throw new AppError("ORDER_NOT_OPEN!", 400);
+    if (order.status !== "OPEN") throw new AppError("ORDER_NOT_OPEN!", 400);
 
     const item : OrderItem = {
         id: getNextOrderItemsIdSeq(),
-        orderId: order[0].order_id,
+        orderId: order.id,
         printed: false,
         printedAt: null,
         name: itemData.name,
@@ -90,7 +91,7 @@ export async function addItemFromDB(orderId: number, itemId: number) : Promise<O
     
 
     const newOrder = await findOrderByOrderIdRepo(orderId);
-    if (!newOrder) return mapOrderFullDTO(order);
+    if (!newOrder) return mapOrderFullDTO(existingOrder);
 
     return mapOrderFullDTO(newOrder); 
 }
@@ -101,9 +102,11 @@ export async function printOrder(orderId : number) : Promise<OrderDTO> {
     if (!order || order[0].status !== "OPEN") throw new Error("ORDER_NOT_FOUND"); 
 
     const updateOrder = await markItemsPrintedRepo(orderId);
-    if (!updateOrder) throw new Error('break update order'); 
+    const res = mapOrderWithItems(updateOrder);
+    if (!res) throw new Error('break update order');
+    
 
-    return mapOrderToDTO(updateOrder);
+    return mapOrderToDTO(res);
     
    
 

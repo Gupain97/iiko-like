@@ -1,4 +1,4 @@
-import { pool } from "../config/db";
+import { pool } from "../../config/db";
 import { mapOrderWithItems } from "../orders/order.mapper";
 import { OrderItem } from "../orders/order.types";
 import { Order } from "../orders/order.types";
@@ -35,7 +35,7 @@ export async function addItemRepo(item: OrderItem): Promise<OrderItem> {
 }
 
 
-export async function markItemsPrintedRepo(orderId: number): Promise<Order | undefined> {
+export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
     await pool.query(
         `UPDATE order_items SET printed = true,
         printed_at = NOW()
@@ -73,7 +73,7 @@ export async function markItemsPrintedRepo(orderId: number): Promise<Order | und
         `, [orderId]
     );
 
-    return mapOrderWithItems(result.rows);
+    return result.rows;
     
 
 }

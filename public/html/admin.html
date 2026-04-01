@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+
+<header>Admin Panel</header>
+
+<div class="container">
+  <div class="sidebar">
+    <button onclick="showView('categories')">Категории</button>
+    <button onclick="showView('items')">Блюда</button>
+    <button onclick="showView('users')">Персонал</buttom>
+  </div>
+
+  <div class="content" id="content"></div>
+</div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

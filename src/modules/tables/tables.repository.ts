@@ -1,6 +1,6 @@
 import { Table } from "./tables.types";
 import { tables } from "./tables.storage"; 
-import { pool } from "../config/db";
+import { pool } from "../../config/db";
 import { TableRow } from "./tables.db.types";
 import { mapTableToService } from "./tables.mapper";
 

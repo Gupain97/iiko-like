@@ -1,4 +1,4 @@
-import { pool } from "../config/db";
+import { pool } from "../../config/db";
 import { mapMenuItemToService } from "./menu.mapper";
 import { MenuItem } from "./menu.types";
 

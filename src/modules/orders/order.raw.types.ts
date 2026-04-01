@@ -1,4 +1,4 @@
-import { OrderStatus } from "../domain/orderStatus";
+import { OrderStatus } from "../../domain/orderStatus";
 import { OrderItem  } from "./order.types";
 
 

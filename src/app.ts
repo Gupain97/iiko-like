@@ -1,9 +1,10 @@
 import express from 'express'; 
 import authRouter from './routes/auth'; 
 import path from 'path';
-import tablesRouter from './tables/tables.routes';
-import ordersRoutes from './orders/order.routes';
-import menuRoutes from './menu/menu.routes';
+import tablesRouter from './modules/tables/tables.routes';
+import ordersRoutes from './modules/orders/order.routes';
+import menuRoutes from './modules/menu/menu.routes';
+import adminRoutes from './admin/admin.ruotes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
 
@@ -23,17 +24,25 @@ app.get('/', (req, res) =>{
 
 app.use('/api/tables', tablesRouter);
 app.use('/api/menu', menuRoutes);
+app.use('/api/orders', ordersRoutes);
+
+
+app.use('/api/admin', adminRoutes);
+
 
 app.get('/main', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/html/main.html'));
+});
+
+app.get('/admin', (req, res)  => {
+    res.sendFile(path.join(__dirname, '../public/html/admin.html'));
 });
 
 pool.query("SELECT NOW()")
   .then(res => console.log("DB connected:", res.rows[0]))
   .catch(err => console.error("DB error:", err));
 
-  
-app.use('/api', ordersRoutes);
+
 
 app.use(errorHandler);
 

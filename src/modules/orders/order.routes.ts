@@ -1,6 +1,6 @@
 import express from 'express';
-import { validateOrderItem } from '../middlewares/validateOrderItems';
-import { asyncHandler } from '../middlewares/asyncHandler';
+import { validateOrderItem } from '../../middlewares/validateOrderItems';
+import { asyncHandler } from '../../middlewares/asyncHandler';
 import { 
      getOrders,
      createOrGetOrderController,
@@ -19,17 +19,17 @@ const router = express.Router();
 
 router.get('/', getOrders);
 
-router.post('/orders', asyncHandler(createOrGetOrderController));
+router.post('/', asyncHandler(createOrGetOrderController));
 //router.get('/orders', getOrderByTableController );
 
 //router.post('/orders/add-item', validateOrderItem, asyncHandler(addItemToOrderController));
-router.post('/orders/:id/items',  asyncHandler(addItemToOrderControllerNew));
+router.post('/:id/items',  asyncHandler(addItemToOrderControllerNew));
 
 //router.get('/orders/:tableId', getOrderByIdController);
 
-router.post('/orders/print', asyncHandler(printOrderController));
+router.post('/print', asyncHandler(printOrderController));
 
-router.post('/orders/precheck', asyncHandler(prechekOrderController));
+router.post('/precheck', asyncHandler(prechekOrderController));
 
 // router.post('/orders/close', closeOrderController);
 

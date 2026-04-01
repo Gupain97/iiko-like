@@ -16,7 +16,7 @@ export function mapOrderToDTO(order: Order): OrderDTO{
         items: items.map(mapOrderItemToDTO),
         total: items.reduce(
             (sum, i) => sum + i.price * i.quantity, 0
-        ),
+        ) /100 ,
         createdAt: order.createdAt,
         precheckAt: order.precheckAt,
         closedAt: order.closedAt,
@@ -29,13 +29,15 @@ export function mapOrderItemToDTO(item: OrderItem): OrderItemDTO {
         name: item.name,
         price: item.price / 100,
         quantity: item.quantity,
-        total: item.price * item.quantity ,
+        total: item.price * item.quantity / 100 ,
         printed: item.printed,
         printedAt: item.printedAt,
 
     };
 }
 
+
+// преобразует строку с БД в Домен!
 export function mapRowOrder(row: OrderRow): Order {
  
     return {
@@ -52,7 +54,7 @@ export function mapRowOrder(row: OrderRow): Order {
     }
 }
 
-export function mapOrderWithItems(rows: OrderWithNameRow[]) : Order | undefined {
+export function mapOrderWithItems(rows: any[]) : Order | undefined {
 
     if (rows.length === 0) return undefined; 
 
@@ -97,6 +99,7 @@ export function mapOrderWithItems(rows: OrderWithNameRow[]) : Order | undefined 
 
 
 //////////////////////////////////////////////
+
 
 export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | undefined {
 
@@ -145,19 +148,3 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | u
 
     return order;
 }
-////////////////////////////////////////////
-// export function mapOrderToDTO(order: Order): OrderDTO {
-//     return {
-//         id: order.id,
-//         status: order.status,
-//         tableId: order.tableId,
-//         items: order.items.map(mapOrderItemToDTO),
-//         total: order.items.reduce(
-//             (sum, i) => sum + i.price * i.quantity, 0
-//         ),
-//         createdAt: order.createdAt,
-//         precheckAt: order.precheckAt,
-//         closedAt: order.closedAt,
-
-//     }
-// }

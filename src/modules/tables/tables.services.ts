@@ -4,7 +4,7 @@ import { closeOrderByOrderId } from "../orders/order.services";
 import { Table } from './tables.types';
 import { closeTableRepo, findTableByTableIdRepo , getTablesRepo, saveTableRepo, updateTableRepo } from "./tables.repository"; 
 import { mapTableToService } from "./tables.mapper";
-import { AppError } from "../errors/AppErrors";
+import { AppError } from "../../errors/AppErrors";
 
 export async function openTable(tableId: number, cashierId: number, guestsCount: number ): Promise<Table| undefined> {
     const existingTable = await findTableByTableIdRepo(tableId);
