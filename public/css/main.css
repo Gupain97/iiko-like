@@ -28,6 +28,14 @@ body {
   cursor: pointer;
 }
 
+#closeShiftBtn {
+  background: #c6211b;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
 .layout {
   display: flex;
   height: calc(100vh - 60px);

@@ -55,7 +55,6 @@ export const printOrderController = async (req: Request, res: Response) => {
  
         const orderId = Number(req.body.orderId);
         const printedOrder = await printOrder(orderId);
-        console.log('printedOrderController',printedOrder)
         res.json(printedOrder);
  
 }

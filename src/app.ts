@@ -5,8 +5,10 @@ import tablesRouter from './modules/tables/tables.routes';
 import ordersRoutes from './modules/orders/order.routes';
 import menuRoutes from './modules/menu/menu.routes';
 import adminRoutes from './admin/admin.ruotes';
+import shiftsRoutes from './modules/shifts/shifts.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
+
 
 
 
@@ -25,6 +27,7 @@ app.get('/', (req, res) =>{
 app.use('/api/tables', tablesRouter);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/shifts', shiftsRoutes);
 
 
 app.use('/api/admin', adminRoutes);

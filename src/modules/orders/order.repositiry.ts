@@ -111,7 +111,7 @@ export async function findOrderByTableRepo(tableid: number ) : Promise<OrderWith
             `, [tableid]
 
     );
-    console.log('result rows', result.rows);
+
 
     return result.rows;
 }

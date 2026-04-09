@@ -35,7 +35,6 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
-        console.log('exOrder', order);
         
         return mapOrderFullDTO(existingOrder);
     }

@@ -106,7 +106,6 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | u
     if (rows.length === 0) return undefined; 
 
     const first = rows[0];
-    console.log('first', first);
 
     const order : OrderWithNameDTO = {
         id: first.order_id,
@@ -143,7 +142,6 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | u
                 });
             }
     }
-    console.log('mapFullOrderDTO', order);
  
 
     return order;

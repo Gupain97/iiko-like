@@ -1,4 +1,5 @@
 import { pool } from "../config/db";
+import { openShift } from "../modules/shifts/shifts.services";
 
 type UserRole = 'manager' | 'director'; 
 
@@ -24,7 +25,7 @@ export const loginByPin = async (pin : string): Promise<Omit<User, 'pin'>> => {
     
     // Временно "база данных"
 
-    const user = userFromDb.find(u => u.pin.toString().trim() === pin.trim());
+    const user = userFromDb.find(u => u.pin.toString().trim() === pin.trim());// исправить
 
 
 
@@ -34,6 +35,7 @@ export const loginByPin = async (pin : string): Promise<Omit<User, 'pin'>> => {
 
   // pin наружу не отдаём
     const { pin: _, ...safeUser } = user;
+    await openShift(user.id);
   
     return safeUser;
 };

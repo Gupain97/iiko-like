@@ -51,7 +51,6 @@ export async function saveTableRepo(table: Table) {
 }
 
 export async function updateTableRepo(tableId: number, table:Table) : Promise<Table | undefined> {
-    console.log('updateTableRepo');
     const result = await pool.query(
         `UPDATE tables SET is_open = $1, guests_count = $2, opened_at = $3, user_id = $4 WHERE id = $5 RETURNING *`,
         [table.isOpen, table.guestsCount, table.openedAt, table.cashierId, tableId]
