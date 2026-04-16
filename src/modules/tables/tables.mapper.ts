@@ -1,4 +1,4 @@
-import { TableRow } from "./tables.db.types";
+// import { TableRow } from "./tables.db.types";
 import { Table } from "./tables.types";
 
 

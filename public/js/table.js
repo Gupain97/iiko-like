@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ===== helpers =====
   const params = new URLSearchParams(window.location.search);
   const tableId = Number(params.get('id'));
+  console.log('params:', params.get('slot'));
   const user = JSON.parse(localStorage.getItem('user'));
   console.log('localstorage', localStorage);
 
@@ -144,10 +145,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tableId , userId: user.id})
       });
+ 
+
+ 
       
       if (!res.ok) {
         const data = await res.json();
-        console.log('data', data);
         if (data.message==="GUEST_COUNT_REQUIRED!"){
           tableNumber = Number(prompt('Введите номер стола'));
           guestsCount = Number(prompt("Введите кол-во гостей"));
@@ -169,6 +172,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       currentOrder = await res.json();
       waiterNameEl.textContent = currentOrder.waiterName + ' ' +  currentOrder.waiterSurname;
+      tableNumberEl.textContent = currentOrder.tableNumber;
       await renderOrder();
  
     } catch (err) {
@@ -298,7 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
   
  
-      await fetch('/api/tables/close', {
+      await fetch('/api/orders/close', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -352,7 +356,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       show(closeTableBtn, false);
       return;
     }
-    if (currentOrder.status === 'OPEN') {
+    if (currentOrder.status === 'OPEN' || currentOrder.status === 'PRINTED') {
       show(openTableBtn, false);
       // show(addItemBtn, true);
       show(precheckOrderBtn, true);
@@ -366,9 +370,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       show(printOrderBtn, false);
       show(precheckOrderBtn, false);
       show(closeTableBtn, true);
+    }  
 
-
-    }
+    
   }
 
   function show(element, visible) {

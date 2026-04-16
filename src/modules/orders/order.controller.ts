@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { orders } from './order.storage';
 import {
     createOrGetOrder,
-    getOrderByTable,
+ 
    // addItemToOrder,
    // closeOrderByTable,
     getOrderById,
@@ -10,12 +10,17 @@ import {
     printOrder,
     precheckOrder,
     addItemFromDB,
+    closeOrderByOrderId,
+    getWaiterOrders,
     
 } from './order.services'
-import { openTable } from "../tables/tables.services";
+// import { openTable } from "../tables/tables.services";
 
 
 export const getOrders = async (req: Request, res: Response) => {
+    const waiterId = Number(req.params.id); 
+    const orders = await getWaiterOrders(waiterId);
+    console.log('orders contr', orders);
     res.json(orders);
 };
 
@@ -87,3 +92,11 @@ export const prechekOrderController = async (req: Request, res: Response) => {
 //         res.status(400).json({message: (err as Error).message});
 //     }
 // };
+
+export const closeOrderByOrderIdController = async (req:Request, res:Response) => {
+    const oId = Number(req.body.orderId);
+    const userId = Number(req.body.userId);
+    const result = await closeOrderByOrderId(oId, userId);
+    res.json(result);
+
+}

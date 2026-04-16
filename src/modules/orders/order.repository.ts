@@ -2,7 +2,7 @@ import { pool } from "../../config/db";
 
 import { Order, OrderItem, NewOrder } from "./order.types";
 import { orders } from "./order.storage"; 
-import { getActiveOrders } from "./order.services";
+//import { getActiveOrders } from "./order.services";
 import { getItemsByOrderIdRepo } from "../order-items/orderItems.repository";
 import { mapOrderWithItems,  mapRowOrder } from "./order.mapper";
 import { OrderWithNameRow } from "./order.raw.types";
@@ -51,7 +51,7 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWit
             LEFT JOIN order_items oi ON oi.order_id = o.id
             LEFT JOIN users ou ON ou.id = o.created_by
             WHERE o.id = $1
-            AND o.status IN ('OPEN', 'PRECHECK')`,
+            AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')`,
             [orderId]
     );
  
@@ -59,10 +59,9 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWit
     return result.rows;
 
 }
-
-export async function getAllOrdersRepo() : Promise<Order[]> {
+export async function getWaiterOrdersRepo(waiterId: number)  {
     const result = await pool.query(
-        `SELECT * FROM orders`
+        `SELECT * FROM orders WHERE status IN ($1, $2, $3) AND created_by = $4`, ["OPEN", "PRINTED", "PRECHECK" , waiterId]
     )
     // return result.rows.map(row => ({
     //     id: row.id,
@@ -75,9 +74,28 @@ export async function getAllOrdersRepo() : Promise<Order[]> {
     //     closedAt: row.closed_at,
     //     items: []
     // }));
-    return result.rows.map(mapRowOrder);
+    return result.rows;
 }
-export async function findOrderByTableRepo(tableid: number ) : Promise<OrderWithNameRow[] > {
+
+
+export async function getAllOrdersRepo()  {
+    const result = await pool.query(
+        `SELECT * FROM orders WHERE status = $1`, ["OPEN"]
+    )
+    // return result.rows.map(row => ({
+    //     id: row.id,
+    //     tableNumber: row.table_number,
+    //     guestsCount: row.guests_count,
+    //     tableId: row.table_id,
+    //     status: row.status,
+    //     createdAt: row.created_at,
+    //     precheckAt: row.prechecked_at,
+    //     closedAt: row.closed_at,
+    //     items: []
+    // }));
+    return result.rows;
+}
+export async function findOrderByTableRepo(tableid: number, userId: number ) : Promise<OrderWithNameRow[] > {
 
     const result = await pool.query(
         `SELECT
@@ -107,8 +125,9 @@ export async function findOrderByTableRepo(tableid: number ) : Promise<OrderWith
             LEFT JOIN users ou ON ou.id = o.created_by
 
             WHERE o.table_id = $1
-            AND o.status IN ('OPEN', 'PRECHECK')
-            `, [tableid]
+            AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')
+            AND o.created_by = $2 
+            `, [tableid, userId]
 
     );
 
@@ -138,7 +157,7 @@ export async function saveOrderRepo(order: NewOrder) {
     return result.rows;
 }
 
-export async function updateStatusOrderRepo(orderId: number, status: ('PRECHECK' | 'OPEN' | 'CLOSED')) {
+export async function updateStatusOrderRepo(orderId: number, status: ('PRECHECK' | 'OPEN' | 'PRINTED'| 'CLOSED')) {
     const result = await pool.query(
         `UPDATE orders SET status = $1 WHERE id = $2 RETURNING *`,[status, orderId]
     );
@@ -167,6 +186,8 @@ export async function closeOrderRepo(orderId: number, userId: number, tableId: n
         closed_by = $3 
         WHERE id = $2 RETURNING *`, ["CLOSED", orderId, userId]
     );
+
+    console.log(row.rows);
     await pool.query(`UPDATE tables SET is_open = false, guests_count = null, user_id = null, opened_at = null WHERE id = $1`,[tableId]);
 
 }

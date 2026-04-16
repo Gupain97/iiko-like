@@ -1,7 +1,7 @@
 import express from 'express'; 
 import authRouter from './routes/auth'; 
 import path from 'path';
-import tablesRouter from './modules/tables/tables.routes';
+// import tablesRouter from './modules/tables/tables.routes';
 import ordersRoutes from './modules/orders/order.routes';
 import menuRoutes from './modules/menu/menu.routes';
 import adminRoutes from './admin/admin.ruotes';
@@ -24,7 +24,7 @@ app.get('/', (req, res) =>{
     res.sendFile(path.join(__dirname, '../public/html/index.html'));
 });
 
-app.use('/api/tables', tablesRouter);
+// app.use('/api/tables', tablesRouter);
 app.use('/api/menu', menuRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/shifts', shiftsRoutes);

@@ -45,42 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // user.role === 'manager' ? 'Менеджер' : 'Директор';
   `${user.role}`;
 });
-
-// async function loadTablesForCashier() {
-  //   const res = await fetch(`/api/tables/cashier/:${userId}`);
-  //   const tables = await res.json();
-  
-  //   tables.forEach(table => {
-    //     const cell = document.querySelector(
-      //       `.table-cell[data-id="${table.id}"]`
-      //     );
-      
-      //     if (!cell) return;
-      
-      //     cell.classList.remove('open', 'printed', 'locked');
-      
-      //     switch (table.orderStatus) {
-        //       case 'OPEN':
-        //         cell.classList.add('open');
-        //         break;
-        
-        //       case 'PRINTED':
-        //         cell.classList.add('printed');
-        //         break;
-        
-        //       case 'PRECHECK':
-        //         cell.classList.add('prechecked');
-        //         break;
-        
-        
-        //       default:
-        //         // нет заказа
-        //         break;
-        //     }
-        
-        
-        //   });
-      // }
+ 
       
 async function closeShiftUser() {
   const userRaw = localStorage.getItem('user');
@@ -94,15 +59,7 @@ async function closeShiftUser() {
   const data = await res.json();
 
 }      
-
-      
-
-// async function loadActiveUsers() {
-//   const res = await fetch('/api/shifts/');
-//   const data = await res.json();
-
-  
-// }
+ 
 
 async function renderActiveUsers() {
   const staffList = document.querySelector(".staff-list");
@@ -123,8 +80,13 @@ async function renderActiveUsers() {
     // создаём элементы
     activeUsers.forEach(user => {
       const div = document.createElement("div");
-      div.className = "user";
+      div.className = "staff-item";
       div.textContent = `${user.name} ${user.surname}`;
+
+      div.addEventListener("click", async () => {
+        // div.className = "activeUser"
+        await loadOrders(user.user_id)
+      })
 
       staffList.appendChild(div);
     });
@@ -137,32 +99,53 @@ async function renderActiveUsers() {
 // запуск
 renderActiveUsers();
 
+async function loadOrders(waiterId = null) {
+  let id = waiterId
+  if (!id){
+    const waiter = JSON.parse(localStorage.getItem('user'));
+    id = waiter.id
 
-async function loadTables() {
-  const res = await fetch('/api/tables');
-  const tables = await res.json();
+  }
 
-  
-  tables.forEach(table => {
+
+    // ✅ Очищаем ВСЕ ячейки столов перед загрузкой новых данных
+  const allCells = document.querySelectorAll('.table-cell');
+  allCells.forEach(cell => {
+    cell.classList.remove('open', 'printed', 'prechecked', 'locked');
+    cell.textContent = '+'; // или ваш текст по умолчанию
+    // Если нужно вернуть исходный текст:
+    // cell.textContent = cell.dataset.originalText || '+';
+  });
+
+
+  const res = await fetch(`/api/orders/${id}`);
+  const orders = await res.json();
+
+  orders.forEach(slot => {
     const cell = document.querySelector(
-      `.table-cell[data-id="${table.id}"]`
+      `.table-cell[data-id="${slot.table_id}"]`
     );
     
     if (!cell) return;
     
-    cell.classList.remove('open', 'printed', 'locked');
+    cell.classList.remove('open', 'printed', 'prechecked', 'locked');
     
-    switch (table.orderStatus) {
+    switch (slot.status) {
       case 'OPEN':
         cell.classList.add('open');
+        cell.textContent = slot.table_number;
+          
         break;
         
         case 'PRINTED':
           cell.classList.add('printed');
+          cell.textContent = slot.table_number;
+          
           break;
           
           case 'PRECHECK':
             cell.classList.add('prechecked');
+            cell.textContent = slot.table_number;
         break;
         
         
@@ -170,15 +153,13 @@ async function loadTables() {
           // нет заказа
           break;
     }
-    
- 
-
   });
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadTables()
- // loadActiveUsers()
+  loadOrders();
+ 
   
 });
 

@@ -42,3 +42,7 @@ export type OrderWithNameDTO = {
     closedAt: Date | null;
     
 }
+
+export type OrderSlotsDto = {
+    id: number;
+}

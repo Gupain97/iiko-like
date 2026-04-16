@@ -6,7 +6,7 @@ import {
      createOrGetOrderController,
   //   getOrderByTableController,
   //   addItemToOrderController,
- //    closeOrderController,
+     closeOrderByOrderIdController,
  //    getOrderByIdController,
      prechekOrderController,
      printOrderController,
@@ -17,20 +17,20 @@ import {
 
 const router = express.Router();
 
-router.get('/', getOrders);
+router.get('/:id', getOrders);
 
 router.post('/', asyncHandler(createOrGetOrderController));
-//router.get('/orders', getOrderByTableController );
+ 
 
-//router.post('/orders/add-item', validateOrderItem, asyncHandler(addItemToOrderController));
+ 
 router.post('/:id/items',  asyncHandler(addItemToOrderControllerNew));
 
-//router.get('/orders/:tableId', getOrderByIdController);
+ 
 
 router.post('/print', asyncHandler(printOrderController));
 
 router.post('/precheck', asyncHandler(prechekOrderController));
 
-// router.post('/orders/close', closeOrderController);
+router.post('/close', closeOrderByOrderIdController);
 
 export default router;

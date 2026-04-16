@@ -44,6 +44,8 @@ export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
         [orderId]
 
     );
+    
+    const upOrders = await pool.query(`UPDATE orders SET status = $1 WHERE status = 'OPEN' AND id = $2 RETURNING *`,["PRINTED", orderId]);
 
     const result = await pool.query(
         `
@@ -69,9 +71,12 @@ export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
         FROM orders o
         LEFT JOIN order_items oi ON oi.order_id = o.id 
         WHERE o.id = $1
-        AND o.status = 'OPEN'
+        AND o.status IN ('OPEN', 'PRINTED') 
         `, [orderId]
     );
+
+    console.log('upOrderRepo', upOrders.rows);
+    console.log('resRepo', result.rows);
 
     return result.rows;
     

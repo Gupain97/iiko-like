@@ -12,9 +12,10 @@ import { findOrderByOrderIdRepo,
          updateStatusOrderRepo,
          closeOrderRepo,
          precheckOrderRepo,
-        } from './order.repositiry';
+         getWaiterOrdersRepo,
+        } from './order.repository';
 import { findTableByTableIdRepo } from '../tables/tables.repository'
-import { openTable } from '../tables/tables.services';
+// import { openTable } from '../tables/tables.services';
 import { AppError } from '../../errors/AppErrors';
 import { addItemRepo, markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { findItemByIdRepo } from '../menu/menu.repository';
@@ -24,13 +25,14 @@ import { findItemByIdRepo } from '../menu/menu.repository';
 
 const ACTIVE_STATUSES : OrderStatus[] = [
     "OPEN",
+    "PRINTED",
     "PRECHECK",
     
 ]
 
 export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderWithNameDTO | undefined>{
 
-    const existingOrder = await findOrderByTableRepo(tableId);
+    const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
     
         
@@ -44,7 +46,7 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         if(!guestsCount){
             throw new AppError('GUEST_COUNT_REQUIRED!', 400);
         }
-        await openTable(tableId, userId, guestsCount);
+       // await openTable(tableId, userId, guestsCount);
     }
     const newOrder: NewOrder = {
         userId,
@@ -60,7 +62,7 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
  
 
     await saveOrderRepo(newOrder);
-    const retOrder = await findOrderByTableRepo(tableId);
+    const retOrder = await findOrderByTableRepo(tableId, userId);
     if (!retOrder) throw new Error('FUCKING_SHIT');
     
     return mapOrderFullDTO(retOrder);
@@ -72,7 +74,7 @@ export async function addItemFromDB(orderId: number, itemId: number) : Promise<O
     const itemData = await findItemByIdRepo(itemId);
     
     if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");
-    if (order.status !== "OPEN") throw new AppError("ORDER_NOT_OPEN!", 400);
+    if (order.status !== "OPEN" && order.status !== "PRINTED") throw new AppError("ORDER_NOT_OPEN!", 400);
 
     const item : OrderItem = {
         id: getNextOrderItemsIdSeq(),
@@ -98,10 +100,11 @@ export async function addItemFromDB(orderId: number, itemId: number) : Promise<O
 export async function printOrder(orderId : number) : Promise<OrderDTO> {
 
     const order = await findOrderByOrderIdRepo(orderId);
-    if (!order || order[0].status !== "OPEN") throw new Error("ORDER_NOT_FOUND"); 
+    if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); 
 
     const updateOrder = await markItemsPrintedRepo(orderId);
     const res = mapOrderWithItems(updateOrder);
+    
     if (!res) throw new Error('break update order');
     
 
@@ -112,21 +115,21 @@ export async function printOrder(orderId : number) : Promise<OrderDTO> {
 }
 
 
-export async function getOrderByTable(tableId: number): Promise<OrderDTO | undefined> {
-    const order = await findOrderByTableRepo(tableId);
+// export async function getOrderByTable(tableId: number): Promise<OrderDTO | undefined> {
+//     const order = await findOrderByTableRepo(tableId);
 
-    if (!order) {
+//     if (!order) {
 
-    }
-    return 
-}
+//     }
+//     return 
+// }
 
 export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO | undefined> {
 
     const order = await findOrderByOrderIdRepo(orderId);
  
 
-    if (!order || order[0].status !== "OPEN") {
+    if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") {
         throw new Error("ORDER_NOT_FOUND");
     }
 
@@ -139,6 +142,7 @@ export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO |
 
 
 export async function closeOrderByOrderId(orderId: number, userId: number): Promise<OrderWithNameDTO | undefined> {
+    console.log('сработал сервис клос')
 
     const order = await findOrderByOrderIdRepo(orderId);
     
@@ -164,4 +168,9 @@ export async function getActiveOrders(): Promise<Order[] | undefined> {
  
     return  orders.filter(o => ACTIVE_STATUSES.includes(o.status)); 
     
+}
+
+export async function getWaiterOrders(waiterId: number) {
+    const orders = await getWaiterOrdersRepo(waiterId);
+    return orders; 
 }

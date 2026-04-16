@@ -1,3 +1,3 @@
-import { Table } from './tables.types'; 
+// import { Table } from './tables.types'; 
 
-export const tables : Table[] = []
+// export const tables : Table[] = []

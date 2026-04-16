@@ -1,5 +1,5 @@
 import { Order, OrderItem } from "./order.types";
-import { OrderDTO, OrderItemDTO, OrderWithNameDTO } from "./order.dto";
+import { OrderDTO, OrderItemDTO, OrderSlotsDto, OrderWithNameDTO } from "./order.dto";
 import { OrderRow } from "./order.db.types";
 import { OrderWithNameRow } from "./order.raw.types";
 
@@ -146,3 +146,8 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | u
 
     return order;
 }
+
+// export function mapOrdersToSlotDTO(rows: any): OrderSlotsDto[] {
+    
+    
+// }
