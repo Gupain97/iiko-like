@@ -15,6 +15,7 @@ document.querySelectorAll('.table-cell')
   const logoutBtn = document.getElementById('logoutBtn');
   const closeShiftBtn = document.getElementById('closeShiftBtn');
   const staffList = document.querySelector('.staff-list');
+  const deliveryBtn = document.querySelector('.deliveryBtn');
   
   logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('user');
@@ -24,6 +25,11 @@ document.querySelectorAll('.table-cell')
   closeShiftBtn.addEventListener('click', async () => {
     await closeShiftUser();
   });
+
+  deliveryBtn.addEventListener('click',() => {
+    window.location.href = 'html/delivery.html'
+
+  })
 
 
 document.addEventListener('DOMContentLoaded', () => {

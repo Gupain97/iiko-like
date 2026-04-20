@@ -12,6 +12,7 @@ import {
     addItemFromDB,
     closeOrderByOrderId,
     getWaiterOrders,
+    addItemQuantity,
     
 } from './order.services'
 // import { openTable } from "../tables/tables.services";
@@ -20,7 +21,6 @@ import {
 export const getOrders = async (req: Request, res: Response) => {
     const waiterId = Number(req.params.id); 
     const orders = await getWaiterOrders(waiterId);
-    console.log('orders contr', orders);
     res.json(orders);
 };
 
@@ -99,4 +99,14 @@ export const closeOrderByOrderIdController = async (req:Request, res:Response) =
     const result = await closeOrderByOrderId(oId, userId);
     res.json(result);
 
+}
+
+
+export const addItemQuantityController = async (req: Request, res:Response) => {
+ 
+    const itemId = Number(req.params.itemId);
+    const orderId = Number(req.body.orderId);
+    const result = await addItemQuantity(itemId, orderId);
+    res.json(result);
+    
 }

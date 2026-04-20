@@ -11,6 +11,7 @@ import {
      prechekOrderController,
      printOrderController,
      addItemToOrderControllerNew,
+     addItemQuantityController,
 
       } from './order.controller'; 
  
@@ -24,6 +25,8 @@ router.post('/', asyncHandler(createOrGetOrderController));
 
  
 router.post('/:id/items',  asyncHandler(addItemToOrderControllerNew));
+
+router.post('/:itemId/increment', asyncHandler(addItemQuantityController));
 
  
 

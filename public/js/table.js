@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let allItems = [];
   let currentOrder = null;
+  let selectedItemId = null;
  // let tableIsOpen = false;
 
 
@@ -23,6 +24,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const openTableBtn = document.getElementById('openTableBtn');
   const closeTableBtn = document.getElementById('closeTableBtn');
   const exitTableBtn = document.getElementById('exitTableBtn');
+
+  const incrementBtn = document.querySelector('.btn-increment');
+
+  
   // const addItemBtn = document.getElementById('addItemBtn');
   const itemsList = document.getElementById('itemsList');
   const orderTotalEl = document.getElementById('orderTotal');
@@ -47,6 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   await renderTotal();
 
   // ===== events =====
+
+  incrementBtn.addEventListener('click', async () => {
+    console.log('нажали кнопку')
+    await incrementItems();
+  })
+
   openTableBtn.addEventListener('click', async () => {
     await openTable();
   });
@@ -198,7 +209,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert(data.message);
         return;
       }
-      currentOrder = await res.json();
+      const data = await res.json();
+      currentOrder = data.order;
+      selectedItemId = data.addedItemId;
+      console.log('easy', selectedItemId);
 
       await renderOrder();
 
@@ -249,6 +263,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   //     console.error('Ошибка при добавлении позиции', err);
   //   }
   // }
+
+  async function incrementItems() {
+    if (!selectedItemId) return
+    console.log('increment',selectedItemId);
+    const res = await fetch(`/api/orders/${selectedItemId}/increment`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ orderId: currentOrder.id})
+
+    });
+    
+    currentOrder = await res.json();
+    renderOrder();
+    
+  };
 
   async function printOrder() {
  
@@ -396,6 +425,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   
     currentOrder.items.forEach(item => {
       const row = document.createElement('tr');
+      row.onclick = () => {
+        selectedItemId = item.id;
+        console.log(item.id);
+      };
       if (currentOrder.status === "PRECHECK"){
         row.classList.add('precheck')
       }
