@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!currentOrder) return;
 
     try {
-      const res = await fetch(`/api/orders/${currentOrder.id}/items`, {
+      const res = await fetch(`/api/order-items/${currentOrder.id}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function incrementItems() {
     if (!selectedItemId) return
     console.log('increment',selectedItemId);
-    const res = await fetch(`/api/orders/${selectedItemId}/increment`, {
+    const res = await fetch(`/api/order-items/${selectedItemId}/increment`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ orderId: currentOrder.id})
