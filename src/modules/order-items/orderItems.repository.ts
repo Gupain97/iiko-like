@@ -14,11 +14,11 @@ export async function getItemsByOrderIdRepo(orderId: number): Promise<OrderItem[
     
 }
 
-export async function addItemRepo(item: OrderItem): Promise<OrderItem> {
+export async function addItemRepo(item: any ): Promise<OrderItem> {
     const result = await pool.query(
         `INSERT INTO order_items
-        (order_id, name, price, quantity, printed, printed_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        (order_id, name, price, quantity, printed, printed_at, menu_item_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *`,
         [
             item.orderId,
@@ -26,7 +26,8 @@ export async function addItemRepo(item: OrderItem): Promise<OrderItem> {
             item.price,
             item.quantity,
             item.printed,
-            item.printedAt
+            item.printedAt,
+            item.menuItemId
         ]
     );
 
@@ -75,21 +76,57 @@ export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
         `, [orderId]
     );
 
-    console.log('upOrderRepo', upOrders.rows);
-    console.log('resRepo', result.rows);
+ 
 
     return result.rows;
     
 
 }
 
-export async function addItemQuantityRepo(item: OrderItem) {
+export async function getItemByItemIdRepo(itemId: number) {
+    const result = await pool.query(
+        `SELECT 
+        oi.id AS order_item_id,
+        oi.order_id,
+        oi.printed,
+        oi.order_id,
+        oi.name,
+        oi.quantity,
+        
+        mi.id AS menu_item_id,
+        mi.name AS menu_item_name
+
+        FROM order_items oi
+        LEFT JOIN menu_items mi ON oi.name = mi.name
+        WHERE oi.id = $1`, [itemId]);
+
+    return result.rows[0];
+}
+
+export async function addItemQuantityRepo(itemId: number) {
     await pool.query(
-        `UPDATE order_items SET quantity += 1 WHERE name = $1 `, [item.name]
+        `UPDATE order_items SET quantity = quantity + 1 WHERE id = $1 `, [itemId]
     )
     
 }
 
+
+export async function getAddedItemOrUndefinedRepo(menuItemId: number, orderId: number) {
+    const result = await pool.query(
+        `SELECT * FROM order_items WHERE order_id = $1 AND menu_item_id = $2 AND printed = $3`,[orderId, menuItemId, false]
+    );
+    return result.rows[0];
+} 
+
+
+export async function decrementItemQantityRepo(itemId: number) {
+    await pool.query(`UPDATE order_items SET quantity = quantity - 1 WHERE id =$1`, [itemId]);
+    
+}
+
+export async function deleteItemRepo(itemId: number) { 
+    await pool.query(`DELETE FROM order_items WHERE id = $1`, [itemId]);
+}
 
 
 

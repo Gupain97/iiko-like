@@ -4,9 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ===== helpers =====
   const params = new URLSearchParams(window.location.search);
   const tableId = Number(params.get('id'));
-  console.log('params:', params.get('slot'));
   const user = JSON.parse(localStorage.getItem('user'));
-  console.log('localstorage', localStorage);
 
   if (!user) {
     window.location.href = '/';
@@ -15,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let allItems = [];
   let currentOrder = null;
+  let selectedItemId = null;
  // let tableIsOpen = false;
 
 
@@ -23,11 +22,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const openTableBtn = document.getElementById('openTableBtn');
   const closeTableBtn = document.getElementById('closeTableBtn');
   const exitTableBtn = document.getElementById('exitTableBtn');
+
+  const incrementBtn = document.querySelector('.btn-increment');
+  const decrementBtn = document.querySelector('.btn-decrement');
+  const deleteBtn = document.querySelector('.btn-delete');
+
+  
   // const addItemBtn = document.getElementById('addItemBtn');
   const itemsList = document.getElementById('itemsList');
   const orderTotalEl = document.getElementById('orderTotal');
   const precheckOrderBtn = document.getElementById('precheckOrder');
   const printOrderBtn = document.getElementById('printOrderBtn');
+  const cancelPrecheckBtn = document.getElementById('cancelPrecheckBtn');
 
   const categoriesEl = document.getElementById("categories");
   const menuItemsEl = document.getElementById("menuItems");
@@ -47,6 +53,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   await renderTotal();
 
   // ===== events =====
+
+  deleteBtn.addEventListener('click', async () => {
+    await deleteItems();
+  });
+
+  decrementBtn.addEventListener('click', async () => {
+    await decrementItems();
+  });
+
+  incrementBtn.addEventListener('click', async () => {
+    await incrementItems();
+  });
+
   openTableBtn.addEventListener('click', async () => {
     await openTable();
   });
@@ -60,6 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     await precheckOrder();
   });
 
+  cancelPrecheckBtn.addEventListener('click', async () => {
+    await cancelPrecheck();
+  })
+
   closeTableBtn.addEventListener('click', async () => {
     await closeTable();
   });
@@ -67,87 +90,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   exitTableBtn.addEventListener('click', () => {
     window.location.href = '/main';
   });
-
-  // ===== functions =====
-
-
-  // async function openTable() {
-  //   const res = await fetch('/api/tables/:tableId');
-  //   if (!res.ok) console.log('сработал не рес ок')
- 
-  //   const data = await res.json();
- 
-    
-    
-  // };
-
-
-  // async function openTable() {
-  //   try {
-  //     const res = await fetch('/api/tables/open', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ tableId, userId: user.id })
-  //     });
-
-  //     if (!res.ok) {
-  //       const data = await res.json();
-  //       if (data.message !== 'TABLE_ALREADY_OPEN') alert(data.message);
-  //     }
-
- 
-  //     await loadOrCreateOrder();
-  //     renderOrder();
-  //     renderTotal();
-  //   } catch (err) {
-  //     console.error('Ошибка при открытии стола', err);
-  //   }
-  // }
-
-  // // async function loadOrCreateOrder() {
-
-  // //     const res = await fetch('/api/orders', {
-  // //       method: 'GET',
-  // //     });
-  // //     const data = res.json();
-  // //     console.log('get orders');
-  // //     console.log(data )
-
-  // //     if (!res.ok) {
-  // //       const guestsCount = 3;
-  // //       console.log('не рес ок ')
-  // //       const res = await fetch('/api/orders', {
-  // //       method: 'POST',
-  // //       headers: { 'Content-Type': 'application/json' },
-  // //       body: JSON.stringify({ tableId , userId: user.id, guestsCount})
-  // //     });
-      
-  // //       const data = await res.json();
- 
- 
-  // //       alert(data.message);
-  // //       return;
-  // //     }
-      
-  // //     currentOrder = await res.json();
- 
-  // //     renderOrder();
-
-  // // };
   
 
   async function loadOrCreateOrder() {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
       let tableNumber = undefined;
       let guestsCount = undefined;
+      const waiterId = urlParams.get('waiterId');
       let res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId , userId: user.id})
+        body: JSON.stringify({ tableId , userId: waiterId})
       });
- 
+      
 
- 
+      
       
       if (!res.ok) {
         const data = await res.json();
@@ -157,20 +115,21 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (!guestsCount) return;
  
 
-        res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tableId , userId: user.id, guestsCount, tableNumber})
+          res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tableId , userId: user.id, guestsCount, tableNumber})
         });
-  
- 
- 
+        
+        
+        
       } else {alert(data.message);
         return;
       }
     }
       
-      currentOrder = await res.json();
+    currentOrder = await res.json();
+    console.log(currentOrder);
       waiterNameEl.textContent = currentOrder.waiterName + ' ' +  currentOrder.waiterSurname;
       tableNumberEl.textContent = currentOrder.tableNumber;
       await renderOrder();
@@ -184,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!currentOrder) return;
 
     try {
-      const res = await fetch(`/api/orders/${currentOrder.id}/items`, {
+      const res = await fetch(`/api/order-items/${currentOrder.id}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -198,7 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert(data.message);
         return;
       }
-      currentOrder = await res.json();
+      const data = await res.json();
+      currentOrder = data.order;
+      selectedItemId = data.addedItemId;
 
       await renderOrder();
 
@@ -207,48 +168,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // async function addItem() {
-  //   if (!currentOrder ) return;
 
-  //   const name = prompt('Название позиции');
-  //   const price = Number(prompt('Цена'));
-  //   const quantity = Number(prompt('Количество'));
+  async function incrementItems() {
+    if (!selectedItemId) return
+    const res = await fetch(`/api/order-items/${selectedItemId}/increment`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ orderId: currentOrder.id})
 
-  //   if (!name || price <= 0 || quantity <= 0) {
-  //     alert('Некорректные данные');
-  //     return;
-  //   }
- 
+    });
+    
+    currentOrder = await res.json();
+    await renderOrder();
+    
+  };
 
-  //   try {
-  //     const res = await fetch('/api/orders/add-item', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({
-  //         orderId: currentOrder.id,
-  //         tableId,
-  //         name,
-  //         price,
-  //         quantity,
-  //       })
-  //     });
+  async function decrementItems() {
+    try {
+      if (!selectedItemId) return
+      const res = await fetch(`/api/order-items/${selectedItemId}/decrement`, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ orderId: currentOrder.id})
+      });
+      const data = await res.json();
 
-  //     if (!res.ok) {
-  //       const data = await res.json();
-  //       alert(data.message);
-  //       return;
-  //     }
+      if (!res.ok) {
+        throw new Error(data.message); 
+      }
+      currentOrder = data.order;
+      selectedItemId = data.itemId;
+      await renderOrder();
+    } catch (err) {
+      console.error('Операция недоступна!', err);
+    }
+  };
 
-  //     await loadOrCreateOrder();
- 
-  //     renderItems();
-  //     console.log('загрузил позиции');
-  //     renderTotal();
-  //     console.log('загрузил тотал');
-  //   } catch (err) {
-  //     console.error('Ошибка при добавлении позиции', err);
-  //   }
-  // }
+  async function deleteItems() {
+    if (!selectedItemId) return
+    try {
+       const res = await fetch(`/api/order-items/${selectedItemId}/delete`, {
+        method: "DELETE",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ orderId: currentOrder.id})
+      });
+      selectedItemId = null;
+      const data  = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+      currentOrder = data; 
+      await renderOrder();
+    } catch (err) {
+      console.error('Ошибка', err);
+    }
+  }
 
   async function printOrder() {
  
@@ -265,6 +239,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         
           currentOrder = await res.json();
+          selectedItemId = null;
           await renderOrder();
           
     } catch (err) {
@@ -286,7 +261,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             userId: user.id })
         
       });
-      console.log('тебл жс, дошли до конца пречека')
 
       currentOrder = await res.json();
       await renderOrder();
@@ -294,6 +268,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
       console.error("Ошибка при пречеке стола", err)
     }
+  }
+
+  async function cancelPrecheck() {
+    if(!currentOrder) return 
+    try {
+      const res = await fetch('/api/orders/cancel-precheck', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', "x-user-id": user.id , "x-user-role": user.role},
+        body: JSON.stringify({orderId: currentOrder.id})
+      })
+      if (res.ok) currentOrder = await res.json();
+      console.log('после',currentOrder);
+      await renderOrder();
+
+
+    } catch (err) {
+      console.error('Ошибка действия', err.message);
+    }
+    
   }
 
   async function closeTable() {
@@ -312,7 +305,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
  
       currentOrder.isOpen = false;
-      console.log('currentOrder', currentOrder)
       
       window.location.href = '/main'
     } catch (err) {
@@ -328,7 +320,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   const data = await res.json();
-  console.log(data);
 
   allItems = data.items;
 
@@ -354,6 +345,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       // show(addItemBtn, false);
       show(precheckOrderBtn, false);
       show(closeTableBtn, false);
+      show(cancelPrecheckBtn, false);
       return;
     }
     if (currentOrder.status === 'OPEN' || currentOrder.status === 'PRINTED') {
@@ -362,6 +354,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       show(precheckOrderBtn, true);
       show(precheckOrderBtn, true);
       show(closeTableBtn, false);
+      show(cancelPrecheckBtn, false);
+      
 
 
     } else if (currentOrder.status ==="PRECHECK"){
@@ -370,6 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       show(printOrderBtn, false);
       show(precheckOrderBtn, false);
       show(closeTableBtn, true);
+      show(cancelPrecheckBtn, true);
     }  
 
     
@@ -382,7 +377,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function renderOrderItems() {
     itemsList.innerHTML = '';
-    console.log('renderItems in function');
 
   
     if (!currentOrder || currentOrder.items.length === 0) {
@@ -396,6 +390,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   
     currentOrder.items.forEach(item => {
       const row = document.createElement('tr');
+      row.onclick = () => {
+        selectedItemId = item.id;
+      };
       if (currentOrder.status === "PRECHECK"){
         row.classList.add('precheck')
       }
@@ -459,7 +456,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       div.innerHTML = `
         <div class="menu-item-name">${item.name}</div>
-        <div class="menu-item-price">${item.price} €</div>
+        <div class="menu-item-price">${item.price / 100} ₽</div>
       `;
 
       div.onclick = () => addItemToOrder(item.id);

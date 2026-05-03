@@ -1,7 +1,8 @@
 import { pool } from "../config/db";
 import { openShift } from "../modules/shifts/shifts.services";
+import { Role } from "../modules/users/users.types";
 
-type UserRole = 'manager' | 'director'; 
+type UserRole = Role; 
 
 
 interface User {

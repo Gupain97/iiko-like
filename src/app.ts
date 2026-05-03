@@ -6,6 +6,8 @@ import ordersRoutes from './modules/orders/order.routes';
 import menuRoutes from './modules/menu/menu.routes';
 import adminRoutes from './admin/admin.ruotes';
 import shiftsRoutes from './modules/shifts/shifts.routes';
+import deliveryRoutes from './modules/delivery/delivery.routes';
+import orderItemsRoutes from './modules/order-items/orderItems.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
 
@@ -31,6 +33,16 @@ app.use('/api/shifts', shiftsRoutes);
 
 
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/delivery', deliveryRoutes);
+
+app.use('/api/order-items', orderItemsRoutes);
+
+
+
+
+
+
 
 
 app.get('/main', (req, res) => {

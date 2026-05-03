@@ -139,6 +139,66 @@ button {
   color: #2c3e50;
 }
 
+/* стили для плюсиков */
+
+/* Сброс стилей и контейнер */
+.act-quantity {
+    display: flex;          /* Располагаем элементы в ряд */
+    align-items: center;    /* Выравниваем по вертикали */
+    gap: 8px;               /* Расстояние между кнопками */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Общие стили для всех кнопок */
+.btn-increment,
+.btn-decrement,
+.btn-quantity,
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;      /* Жирный шрифт */
+    background-color: #f0f0f0;  /* Светло-серый фон */
+    border: 1px solid #ccc;
+    border-radius: 8px;     /* Слегка скруглённые углы */
+    cursor: pointer;
+    user-select: none;      /* Чтобы текст не выделялся при клике */
+    transition: all 0.2s ease; /* Плавные эффекты */
+}
+
+/* Эффект при наведении */
+.btn-increment:hover,
+.btn-decrement:hover,
+.btn-delete:hover {
+    background-color: #e0e0e0; /* Темнее при наведении */
+    transform: scale(1.02);     /* Лёгкое увеличение */
+}
+
+/* Эффект при нажатии */
+.btn-increment:active,
+.btn-decrement:active,
+.btn-delete:active {
+    transform: scale(0.98);
+}
+
+ 
+.btn-quantity {
+    width: 50px;
+    background-color: white;
+    cursor: default;        /* Обычный курсор, т.к. это не кнопка */
+    font-weight: bold;
+}
+
+ 
+.btn-delete:hover {
+    background-color: #ffebee;
+    border-color: #f5c6cb;
+}
+
+
 /* Стили для статусов (как у тебя в коде) */
 .items-table tr.added {
   background-color: #47b4e7;

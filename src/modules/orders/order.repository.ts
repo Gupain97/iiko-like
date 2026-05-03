@@ -51,7 +51,8 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWit
             LEFT JOIN order_items oi ON oi.order_id = o.id
             LEFT JOIN users ou ON ou.id = o.created_by
             WHERE o.id = $1
-            AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')`,
+            AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')
+            ORDER BY printed DESC, created_at ASC`,
             [orderId]
     );
  
@@ -95,7 +96,7 @@ export async function getAllOrdersRepo()  {
     // }));
     return result.rows;
 }
-export async function findOrderByTableRepo(tableid: number, userId: number ) : Promise<OrderWithNameRow[] > {
+export async function findOrderByTableRepo(tableId: number, userId: number ) : Promise<OrderWithNameRow[] > {
 
     const result = await pool.query(
         `SELECT
@@ -126,13 +127,57 @@ export async function findOrderByTableRepo(tableid: number, userId: number ) : P
 
             WHERE o.table_id = $1
             AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')
-            AND o.created_by = $2 
-            `, [tableid, userId]
+            AND o.created_by = $2
+            ORDER BY printed DESC, created_at ASC
+            `, [tableId, userId]
 
     );
 
 
     return result.rows;
+}
+
+export async function getHimOrderByTableRepo(tableId: number, userId: number ) : Promise<OrderWithNameRow[] >  {
+
+        const result = await pool.query(
+        `SELECT
+            o.id AS order_id,
+            o.status,
+            o.table_number,
+            o.guests_count,
+            o.table_id,
+            o.created_at,
+            o.prechecked_at,
+            o.closed_at,
+            o.created_by,
+
+            oi.id AS item_id,
+            oi.name AS item_name,
+            oi.order_id AS order_item_order_id,
+            oi.quantity,
+            oi.price,
+            oi.printed,
+            oi.printed_at,
+
+            ou.name AS waiter_name,
+            ou.surname AS waiter_surname
+            
+            FROM orders o
+            LEFT JOIN order_items oi ON oi.order_id = o.id
+
+            WHERE o.table_id = $1
+            AND o.status IN ('OPEN', 'PRINTED', 'PRECHECK')
+            AND o.created_by = $2
+            ORDER BY printed DESC, created_at ASC
+            `, [tableId, userId]
+
+    );
+
+
+    return result.rows;
+
+
+    
 }
 
 
@@ -176,6 +221,11 @@ export async function precheckOrderRepo(orderId: number) {
     return findOrderByOrderIdRepo(orderId);
 
 }
+
+
+// export async function cancelPrecheckOrderRepo(orderId: number) {
+//     const result = await pool.query(`UPDATE orders SET status = `)
+// }
 
 export async function closeOrderRepo(orderId: number, userId: number, tableId: number) {
     const row = await pool.query(

@@ -30,3 +30,9 @@ export class OrderStatusError extends AppError{
         super(message, 400);
     }
 }
+
+export class ItemStatusError extends AppError {
+    constructor(message = 'Item status invalid for this action') {
+        super(message, 400);
+    }
+}

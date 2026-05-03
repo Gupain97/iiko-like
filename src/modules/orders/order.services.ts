@@ -1,5 +1,5 @@
 //import { orders } from './order.storage'
-import { NewOrder, Order, OrderItem } from './order.types'
+import { NewOrder, Order } from './order.types'
 import { mapOrderItemToDTO, mapOrderToDTO, mapRowOrder, mapOrderFullDTO, mapOrderWithItems } from './order.mapper';
 import { OrderDTO, OrderItemDTO, OrderWithNameDTO} from './order.dto';
 import { OrderStatus } from '../../domain/orderStatus';
@@ -8,17 +8,18 @@ import { findOrderByOrderIdRepo,
      findOrderByTableRepo,
       getAllOrdersRepo,
        saveOrderRepo,
-         getNextOrderItemsIdSeq,
-         updateStatusOrderRepo,
          closeOrderRepo,
          precheckOrderRepo,
          getWaiterOrdersRepo,
+         updateStatusOrderRepo,
+         getHimOrderByTableRepo,
         } from './order.repository';
 import { findTableByTableIdRepo } from '../tables/tables.repository'
-// import { openTable } from '../tables/tables.services';
+;
 import { AppError } from '../../errors/AppErrors';
-import { addItemRepo, markItemsPrintedRepo } from '../order-items/orderItems.repository';
-import { findItemByIdRepo } from '../menu/menu.repository';
+import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
+import { getUserStatusRepo } from '../shifts/shifts.repository';
+import { getUserRoleRepo } from '../users/users.repository';
 
 
  
@@ -34,11 +35,19 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
+    const userRole = await getUserRoleRepo(userId);
+    console.log(userRole)
     
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
+        console.log('отработал не менеджер',order);
         
         return mapOrderFullDTO(existingOrder);
+    } else if (userRole && userRole === "MANAGER") {
+        console.log('отработал менеджер');
+        const order = await getHimOrderByTableRepo(tableId, userId);
+        console.log(order);
+        return mapOrderFullDTO(order);
     }
       
     const existingTable = await findTableByTableIdRepo(tableId);
@@ -46,7 +55,6 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         if(!guestsCount){
             throw new AppError('GUEST_COUNT_REQUIRED!', 400);
         }
-       // await openTable(tableId, userId, guestsCount);
     }
     const newOrder: NewOrder = {
         userId,
@@ -68,35 +76,6 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     return mapOrderFullDTO(retOrder);
 }
 
-export async function addItemFromDB(orderId: number, itemId: number) : Promise<OrderDTO | undefined> {
-    const existingOrder = await findOrderByOrderIdRepo(orderId)
-    const order = mapOrderWithItems(existingOrder);
-    const itemData = await findItemByIdRepo(itemId);
-    
-    if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");
-    if (order.status !== "OPEN" && order.status !== "PRINTED") throw new AppError("ORDER_NOT_OPEN!", 400);
-
-    const item : OrderItem = {
-        id: getNextOrderItemsIdSeq(),
-        orderId: order.id,
-        printed: false,
-        printedAt: null,
-        name: itemData.name,
-        price: itemData.price,
-        quantity: 1
-    };
-
-    if (!item) throw new Error("ITEM_NOT_CREATED");
-
-    await addItemRepo(item);
-    
-
-    const newOrder = await findOrderByOrderIdRepo(orderId);
-    if (!newOrder) return mapOrderFullDTO(existingOrder);
-
-    return mapOrderFullDTO(newOrder); 
-}
-
 export async function printOrder(orderId : number) : Promise<OrderDTO> {
 
     const order = await findOrderByOrderIdRepo(orderId);
@@ -115,15 +94,6 @@ export async function printOrder(orderId : number) : Promise<OrderDTO> {
 }
 
 
-// export async function getOrderByTable(tableId: number): Promise<OrderDTO | undefined> {
-//     const order = await findOrderByTableRepo(tableId);
-
-//     if (!order) {
-
-//     }
-//     return 
-// }
-
 export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO | undefined> {
 
     const order = await findOrderByOrderIdRepo(orderId);
@@ -138,6 +108,12 @@ export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO |
  
     return mapOrderFullDTO(updateOrder);
     
+}
+
+export async function cancelPrecheckOrder(orderId: number) {
+    const up = await updateStatusOrderRepo(orderId, "PRINTED");
+    const res = await findOrderByOrderIdRepo(orderId);
+    return mapOrderFullDTO(res);
 }
 
 
