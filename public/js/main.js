@@ -1,58 +1,62 @@
-console.log('table cells:', document.querySelectorAll('.table-cell'));
+// ✅ Один DOMContentLoaded, всё внутри
+
+let currentSelectWaiter = null;
 
 
-document.querySelectorAll('.table-cell')
-  .forEach(cell => {
-    cell.addEventListener('click', () => {
-      const tableId = cell.dataset.id;
-      window.location.href = `/html/table.html?id=${tableId}`;
-    });
-    
-  });
-  
-
-  
+document.addEventListener('DOMContentLoaded', () => {
+  // Локальные переменные доступны во всех функциях внутри
   const logoutBtn = document.getElementById('logoutBtn');
   const closeShiftBtn = document.getElementById('closeShiftBtn');
   const staffList = document.querySelector('.staff-list');
   const deliveryBtn = document.querySelector('.deliveryBtn');
   
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('user');
-    window.location.href = '/';
-  });
-
-  closeShiftBtn.addEventListener('click', async () => {
-    await closeShiftUser();
-  });
-
-  deliveryBtn.addEventListener('click',() => {
-    window.location.href = 'html/delivery.html'
-
-  })
-
-
-document.addEventListener('DOMContentLoaded', () => {
+  // Проверка авторизации - первым делом
   const userRaw = localStorage.getItem('user');
-
-  
-  
   if (!userRaw) {
     window.location.href = '/';
     return;
   }
-  
+ 
   const user = JSON.parse(userRaw);
   
-  document.getElementById('userName').textContent =
-  `${user.name} ${user.surname}`;
+  // Заполняем данные пользователя
+  document.getElementById('userName').textContent = `${user.name} ${user.surname}`;
+  document.getElementById('userRole').textContent = `${user.role}`;
   
-  document.getElementById('userRole').textContent =
-  // user.role === 'manager' ? 'Менеджер' : 'Директор';
-  `${user.role}`;
+  // Навешиваем обработчики
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  });
+  
+  closeShiftBtn.addEventListener('click', async () => {
+    await closeShiftUser();
+  });
+  
+  deliveryBtn.addEventListener('click', () => {
+    window.location.href = 'html/delivery.html';
+  });
+  
+  // Обработчики для столов
+  document.querySelectorAll('.table-cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const tableId = cell.dataset.id;
+      const userId = cell.dataset.waiterId;
+      console.log('currentSelectWaiter:', currentSelectWaiter);
+      window.location.href = `/html/table.html?id=${tableId}&waiterId=${currentSelectWaiter}`;
+    });
+  });
+  
+  // Загружаем данные
+  renderActiveUsers();
+  loadOrders();
 });
- 
-      
+
+
+
+
+
+
 async function closeShiftUser() {
   const userRaw = localStorage.getItem('user');
   const user = JSON.parse(userRaw);
@@ -106,12 +110,16 @@ async function renderActiveUsers() {
 renderActiveUsers();
 
 async function loadOrders(waiterId = null) {
-  let id = waiterId
+  let id = waiterId;
+  currentSelectWaiter = waiterId;
   if (!id){
     const waiter = JSON.parse(localStorage.getItem('user'));
     id = waiter.id
-
+    currentSelectWaiter = waiter.id;
+    
   }
+  console.log('id', id);
+  console.log('currSel:', currentSelectWaiter);
 
 
     // ✅ Очищаем ВСЕ ячейки столов перед загрузкой новых данных
@@ -162,11 +170,5 @@ async function loadOrders(waiterId = null) {
   });
     
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  loadOrders();
- 
-  
-});
 
  

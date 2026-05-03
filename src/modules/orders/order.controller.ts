@@ -1,24 +1,19 @@
 import { Request, Response } from "express";
-import { orders } from './order.storage';
 import {
     createOrGetOrder,
- 
-   // addItemToOrder,
-   // closeOrderByTable,
-    getOrderById,
-  //  calculateTotal,
     printOrder,
     precheckOrder,
-    addItemFromDB,
+
     closeOrderByOrderId,
     getWaiterOrders,
-    addItemQuantity,
+    cancelPrecheckOrder,
+
     
 } from './order.services'
-// import { openTable } from "../tables/tables.services";
 
 
-export const getOrders = async (req: Request, res: Response) => {
+
+export const getOrdersController = async (req: Request, res: Response) => {
     const waiterId = Number(req.params.id); 
     const orders = await getWaiterOrders(waiterId);
     res.json(orders);
@@ -28,11 +23,10 @@ export const createOrGetOrderController = async (req: Request, res: Response) =>
 
         const tableId = Number(req.body.tableId);
         const userId = Number(req.body.userId);
+        console.log('userId:', userId);
         const guestsCount = Number(req.body.guestsCount);
         const tableNumber = Number(req.body.tableNumber);
 
-        // const table = await openTable(tableId, userId, guestsCount);
-       // const order = orders.find(o => o.tableId === tableId)
         const order = await createOrGetOrder(tableId, userId, guestsCount, tableNumber);
  
         res.json(order);
@@ -41,20 +35,7 @@ export const createOrGetOrderController = async (req: Request, res: Response) =>
 
  
 
-// export const addItemToOrderController = async (req: Request, res: Response) => {
-    
-//         const { orderId, name, price, quantity } = req.body;
-//         const itemData = { name, price, quantity };
-//         const order = await addItemToOrder(orderId, itemData);
-//         res.json({...order});
-    
-// };
-export const addItemToOrderControllerNew = async (req:Request, res: Response) => {
-    const { menuItemId } = req.body;
-    const orderId = Number(req.params.id);
-    const order = await addItemFromDB(orderId, menuItemId);
-    res.json({...order});
-}
+
 
 export const printOrderController = async (req: Request, res: Response) => {
  
@@ -64,16 +45,6 @@ export const printOrderController = async (req: Request, res: Response) => {
  
 }
 
-// export const getOrderByIdController = (req: Request, res: Response) => {
-//     try {
-//         const orderId = Number(req.params.orderId);
-//         const order = getOrderById(orderId);
-//         if (!order) throw new Error("TABLE_NOT_FOUND");
-//         res.json({...order});
-//     } catch (err) {
-//         res.status(400).json({message: (err as Error).message});
-//     }
-// };
 
 export const prechekOrderController = async (req: Request, res: Response) => {
         const orderId = Number(req.body.orderId);
@@ -83,15 +54,14 @@ export const prechekOrderController = async (req: Request, res: Response) => {
 
 }
 
-// export const closeOrderController = (req: Request, res: Response) => {
-//     try {
-//         const tableId = Number(req.body.tableId);
-//         const order = closeOrderByTable(tableId);
-//         res.json({...order, total: calculateTotal(order)});
-//     } catch (err) {
-//         res.status(400).json({message: (err as Error).message});
-//     }
-// };
+export const cancelPrecheckOrderController = async (req: Request, res: Response) => {
+    console.log(req.body);
+    const orderId = Number(req.body.orderId);
+    const order = await cancelPrecheckOrder(orderId);
+    res.json(order);
+}
+
+
 
 export const closeOrderByOrderIdController = async (req:Request, res:Response) => {
     const oId = Number(req.body.orderId);
@@ -99,14 +69,4 @@ export const closeOrderByOrderIdController = async (req:Request, res:Response) =
     const result = await closeOrderByOrderId(oId, userId);
     res.json(result);
 
-}
-
-
-export const addItemQuantityController = async (req: Request, res:Response) => {
- 
-    const itemId = Number(req.params.itemId);
-    const orderId = Number(req.body.orderId);
-    const result = await addItemQuantity(itemId, orderId);
-    res.json(result);
-    
 }

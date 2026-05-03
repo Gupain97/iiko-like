@@ -15,7 +15,6 @@ export async function getItemsByOrderIdRepo(orderId: number): Promise<OrderItem[
 }
 
 export async function addItemRepo(item: any ): Promise<OrderItem> {
-    console.log(item);
     const result = await pool.query(
         `INSERT INTO order_items
         (order_id, name, price, quantity, printed, printed_at, menu_item_id)
@@ -92,6 +91,7 @@ export async function getItemByItemIdRepo(itemId: number) {
         oi.printed,
         oi.order_id,
         oi.name,
+        oi.quantity,
         
         mi.id AS menu_item_id,
         mi.name AS menu_item_name
@@ -118,6 +118,15 @@ export async function getAddedItemOrUndefinedRepo(menuItemId: number, orderId: n
     return result.rows[0];
 } 
 
+
+export async function decrementItemQantityRepo(itemId: number) {
+    await pool.query(`UPDATE order_items SET quantity = quantity - 1 WHERE id =$1`, [itemId]);
+    
+}
+
+export async function deleteItemRepo(itemId: number) { 
+    await pool.query(`DELETE FROM order_items WHERE id = $1`, [itemId]);
+}
 
 
 

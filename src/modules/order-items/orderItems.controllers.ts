@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { addItemFromDB, addItemQuantity } from "./orderItems.service";
+import { addItemFromDB, addItemQuantity, decrementItemQantity, deletItemFromOrder } from "./orderItems.service";
 
 
 
@@ -22,3 +22,18 @@ export const addItemQuantityController = async (req: Request, res:Response) => {
     res.json(result);
     
 }
+
+export const decrementItemQantityController = async (req: Request, res: Response) => {
+    const itemId = Number(req.params.itemId);
+    const orderId = Number(req.body.orderId);
+    const result = await decrementItemQantity(itemId, orderId);
+    res.json(result);
+}
+
+export const deleteItemController = async (req: Request, res: Response) => {
+    const itemId = Number(req.params.itemId);
+    const orderId = Number(req.body.orderId);
+    const result = await deletItemFromOrder(itemId, orderId);
+    res.json(result);
+}
+

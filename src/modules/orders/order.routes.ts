@@ -2,37 +2,34 @@ import express from 'express';
 import { validateOrderItem } from '../../middlewares/validateOrderItems';
 import { asyncHandler } from '../../middlewares/asyncHandler';
 import { 
-     getOrders,
+     getOrdersController,
      createOrGetOrderController,
-  //   getOrderByTableController,
-  //   addItemToOrderController,
      closeOrderByOrderIdController,
- //    getOrderByIdController,
      prechekOrderController,
      printOrderController,
-     addItemToOrderControllerNew,
-     addItemQuantityController,
+     cancelPrecheckOrderController
 
       } from './order.controller'; 
+import { requireRole } from '../../middlewares/role.middleware';
+import { authMiddleware } from '../../middlewares/auth.middleware';
  
 
 const router = express.Router();
 
-router.get('/:id', getOrders);
+router.get('/:id', getOrdersController);
 
 router.post('/', asyncHandler(createOrGetOrderController));
  
 
  
-router.post('/:id/items',  asyncHandler(addItemToOrderControllerNew));
-
-router.post('/:itemId/increment', asyncHandler(addItemQuantityController));
 
  
 
 router.post('/print', asyncHandler(printOrderController));
 
 router.post('/precheck', asyncHandler(prechekOrderController));
+
+router.post('/cancel-precheck', authMiddleware,  requireRole("MANAGER"),  asyncHandler(cancelPrecheckOrderController));
 
 router.post('/close', closeOrderByOrderIdController);
 

@@ -1,8 +1,8 @@
-import { AppError } from "../../errors/AppErrors";
+import { AppError, ItemStatusError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
 import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
 import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
-import { addItemQuantityRepo, addItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo } from "./orderItems.repository";
+import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo } from "./orderItems.repository";
 
 
 
@@ -11,7 +11,6 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
     const existingOrder = await findOrderByOrderIdRepo(orderId)
     const order = mapOrderWithItems(existingOrder);
     const itemData = await findItemByIdRepo(menuItemId); // menu_item
-    console.log(menuItemId);
 
     
     if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");
@@ -49,7 +48,6 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
 
     const newOrder = await findOrderByOrderIdRepo(orderId);
     if (!newOrder) return mapOrderFullDTO(existingOrder);
-    console.log('create');
 
     return  {
         order : mapOrderFullDTO(newOrder),
@@ -71,6 +69,32 @@ export async function addItemQuantity(itemId: number, orderId: number) {
     }
 
     const res = await findOrderByOrderIdRepo(orderId);
-    console.log('add');
+    return mapOrderFullDTO(res);
+}
+
+export async function decrementItemQantity(itemId: number, orderId: number) {
+    const item = await  getItemByItemIdRepo(itemId);
+    if (item.printed) throw new ItemStatusError();
+    let itId = null;
+    if (item.quantity > 1 ) {
+        await decrementItemQantityRepo(itemId);
+        itId = itemId;
+    } else {
+        await deleteItemRepo(itemId);
+    }
+    
+    const res = await findOrderByOrderIdRepo(orderId);
+    return {
+        order: mapOrderFullDTO(res),
+        itemId: itId 
+    };
+    
+}
+
+export async function deletItemFromOrder(itemId: number, orderId: number) {
+    const item = await getItemByItemIdRepo(itemId);
+    if (item.printed) throw new ItemStatusError();
+    await deleteItemRepo(itemId);
+    const res = await findOrderByOrderIdRepo(orderId);
     return mapOrderFullDTO(res);
 }

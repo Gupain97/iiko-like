@@ -5,3 +5,5 @@ export interface NewUser {
     role: string,
 
 }
+
+export type Role = ("MANAGER" | "WAITER" | "DIRECTOR")
