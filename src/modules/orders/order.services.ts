@@ -36,17 +36,12 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
     const userRole = await getUserRoleRepo(userId);
-    console.log(userRole)
     
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
-        console.log('отработал не менеджер',order);
-        
         return mapOrderFullDTO(existingOrder);
     } else if (userRole && userRole === "MANAGER") {
-        console.log('отработал менеджер');
         const order = await getHimOrderByTableRepo(tableId, userId);
-        console.log(order);
         return mapOrderFullDTO(order);
     }
       
@@ -102,7 +97,7 @@ export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO |
     if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") {
         throw new Error("ORDER_NOT_FOUND");
     }
-
+    await printOrder(orderId);
     const updateOrder = await precheckOrderRepo(orderId);
     if (!updateOrder) throw new Error('ORDER_NOT_PRECHECKED')
  
@@ -118,7 +113,6 @@ export async function cancelPrecheckOrder(orderId: number) {
 
 
 export async function closeOrderByOrderId(orderId: number, userId: number): Promise<OrderWithNameDTO | undefined> {
-    console.log('сработал сервис клос')
 
     const order = await findOrderByOrderIdRepo(orderId);
     
@@ -150,3 +144,8 @@ export async function getWaiterOrders(waiterId: number) {
     const orders = await getWaiterOrdersRepo(waiterId);
     return orders; 
 }
+
+// export async function getOpenCash(userId: number) {
+//     const res = await getOpenCashRepository(userId);
+    
+// }

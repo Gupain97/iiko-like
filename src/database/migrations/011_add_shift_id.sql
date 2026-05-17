@@ -1,0 +1,2 @@
+ALTER TABLE orders
+ADD COLUMN shift_id INTEGER;

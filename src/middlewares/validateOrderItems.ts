@@ -11,7 +11,6 @@ export const validateOrderItem = (req: Request, res: Response, next: NextFunctio
     if (quantity === null || typeof quantity !== 'number' || quantity <= 0) errors.push('Invalid quantity');
 
     if (errors.length > 0) {
-        console.log(errors);
         return next(new ValidationError('Order item validation failed', errors));
     }
 

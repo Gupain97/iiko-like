@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const waiterId = urlParams.get('waiterId');
       let res = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId , userId: waiterId})
+        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id, 'x-user-role': user.role },
+        body: JSON.stringify({ tableId , waiterId: waiterId})
       });
       
 
@@ -117,8 +117,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           res = await fetch('/api/orders', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tableId , userId: user.id, guestsCount, tableNumber})
+            headers: { 
+              'Content-Type': 'application/json', 
+              'x-user-id': user.id, 
+              'x-user-role': user.role  },
+            body: JSON.stringify({ 
+              tableId , 
+              userId: user.id, 
+              waiterId,
+              guestsCount, tableNumber ,
+            })
         });
         
         
@@ -209,8 +217,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
        const res = await fetch(`/api/order-items/${selectedItemId}/delete`, {
         method: "DELETE",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ orderId: currentOrder.id})
+        headers: {'Content-Type': 'application/json', 'x-user-role': user.role},
+        body: JSON.stringify({ orderId: currentOrder.id, userId: user.id})
       });
       selectedItemId = null;
       const data  = await res.json();
@@ -277,14 +285,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         method: 'POST',
         headers: {'Content-Type': 'application/json', "x-user-id": user.id , "x-user-role": user.role},
         body: JSON.stringify({orderId: currentOrder.id})
-      })
-      if (res.ok) currentOrder = await res.json();
-      console.log('после',currentOrder);
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message);
+      } else {
+       currentOrder = data;
+      } 
       await renderOrder();
 
 
     } catch (err) {
-      console.error('Ошибка действия', err.message);
+      alert(err);
+      console.error('Недостаточно прав', err.message);
     }
     
   }

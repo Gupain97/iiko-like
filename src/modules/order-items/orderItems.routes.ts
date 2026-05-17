@@ -1,6 +1,7 @@
 import express from 'express'
 import { asyncHandler } from '../../middlewares/asyncHandler';
 import { addItemToOrderControllerNew, addItemQuantityController, decrementItemQantityController, deleteItemController } from './orderItems.controllers';
+import { authMiddleware } from '../../middlewares/auth.middleware';
 
 const router = express.Router();
 

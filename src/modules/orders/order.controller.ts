@@ -22,8 +22,7 @@ export const getOrdersController = async (req: Request, res: Response) => {
 export const createOrGetOrderController = async (req: Request, res: Response) => {
 
         const tableId = Number(req.body.tableId);
-        const userId = Number(req.body.userId);
-        console.log('userId:', userId);
+        const userId = Number(req.body.waiterId);
         const guestsCount = Number(req.body.guestsCount);
         const tableNumber = Number(req.body.tableNumber);
 
@@ -55,7 +54,6 @@ export const prechekOrderController = async (req: Request, res: Response) => {
 }
 
 export const cancelPrecheckOrderController = async (req: Request, res: Response) => {
-    console.log(req.body);
     const orderId = Number(req.body.orderId);
     const order = await cancelPrecheckOrder(orderId);
     res.json(order);

@@ -33,7 +33,8 @@ export const decrementItemQantityController = async (req: Request, res: Response
 export const deleteItemController = async (req: Request, res: Response) => {
     const itemId = Number(req.params.itemId);
     const orderId = Number(req.body.orderId);
-    const result = await deletItemFromOrder(itemId, orderId);
+    const userId = Number(req.body.userId);
+    const result = await deletItemFromOrder(itemId, orderId, userId);
     res.json(result);
 }
 

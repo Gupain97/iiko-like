@@ -119,7 +119,8 @@ export async function findOrderByTableRepo(tableId: number, userId: number ) : P
             oi.printed_at,
 
             ou.name AS waiter_name,
-            ou.surname AS waiter_surname
+            ou.surname AS waiter_surname,
+            ou.id AS user_id
             
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
@@ -233,11 +234,20 @@ export async function closeOrderRepo(orderId: number, userId: number, tableId: n
         closed_at = NOW(),
         table_id = null, 
         status = $1, 
-        closed_by = $3 
+        closed_by = $3,
+        shift_id = ( SELECT id FROM shifts WHERE user_id = $3 AND status = 'OPEN')
+
         WHERE id = $2 RETURNING *`, ["CLOSED", orderId, userId]
     );
 
-    console.log(row.rows);
     await pool.query(`UPDATE tables SET is_open = false, guests_count = null, user_id = null, opened_at = null WHERE id = $1`,[tableId]);
 
 }
+
+// export async function getOpenCashRepository(userId: number) {
+//     const res = await pool.query(`
+//         SELECT SUM(total) FROM orders WHERE created_by = $1 AND status IN (OPEN, PRECHECK)
+//         `,[userId]);
+        
+//     console.log("res rows gOCachRepo", res.rows);
+// }

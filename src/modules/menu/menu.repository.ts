@@ -22,3 +22,9 @@ export async function findItemByIdRepo(itemId: number): Promise<MenuItem | undef
 }
 
 
+export async function getCurrentStopListRepo() {
+    const res = await pool.query(`SELECT * FROM menu_items WHERE is_active = false`)
+    console.log(res.rows);
+    return res.rows;
+}
+

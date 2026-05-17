@@ -1,0 +1,42 @@
+body {
+    background: #ffffff;
+}
+
+.menuPoints  {
+    border: none;
+    display: flex;
+    color: black;
+    padding: 30px, 30px;
+}
+
+.menuPoints button {
+    height: 30px;
+    width: 90px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #222222;
+    border: none;
+    display: flex;
+    background: rgb(109, 119, 113);
+    padding: 20px, 20px;
+    margin-top: 20px;
+    margin-left: 100px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#closeShiftBtn {
+    background: #c6211b;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    
+    width: 100px;
+    height: 50px;
+    display: flex;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}

@@ -128,6 +128,22 @@ export async function deleteItemRepo(itemId: number) {
     await pool.query(`DELETE FROM order_items WHERE id = $1`, [itemId]);
 }
 
+export async function getPrintedCashForWaiterRepo(userId: number) {
+    const res = await pool.query(`
+        SELECT SUM(oi.price * oi.quantity)
+        
+        
+        FROM order_items oi
+        LEFT JOIN orders o ON oi.order_id = o.id
+
+        WHERE created_by = $1
+        AND o.status in ('OPEN', 'PRECHECK', 'PRINTED')
+         `, [userId]);
+
+    return res.rows[0].sum;
+
+}
+
 
 
 

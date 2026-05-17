@@ -12,13 +12,14 @@ import {
       } from './order.controller'; 
 import { requireRole } from '../../middlewares/role.middleware';
 import { authMiddleware } from '../../middlewares/auth.middleware';
+import { checkWaiter } from '../../middlewares/waiter.middleware';
  
 
 const router = express.Router();
 
 router.get('/:id', getOrdersController);
 
-router.post('/', asyncHandler(createOrGetOrderController));
+router.post('/', authMiddleware, checkWaiter, asyncHandler(createOrGetOrderController));
  
 
  

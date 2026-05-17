@@ -2,7 +2,8 @@ import { AppError, ItemStatusError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
 import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
 import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
-import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo } from "./orderItems.repository";
+import { getUserRoleRepo } from "../users/users.repository";
+import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
 
 
 
@@ -91,10 +92,17 @@ export async function decrementItemQantity(itemId: number, orderId: number) {
     
 }
 
-export async function deletItemFromOrder(itemId: number, orderId: number) {
+export async function deletItemFromOrder(itemId: number, orderId: number, userId: number) {
     const item = await getItemByItemIdRepo(itemId);
-    if (item.printed) throw new ItemStatusError();
+    const userRole = await getUserRoleRepo(userId);
+    if (item.printed && userRole.role !== "MANAGER") throw new ItemStatusError();
     await deleteItemRepo(itemId);
     const res = await findOrderByOrderIdRepo(orderId);
     return mapOrderFullDTO(res);
+}
+
+
+export async function getPrintedCashForWaiter(userId: number) {
+    const res = await getPrintedCashForWaiterRepo(userId);
+    return res;
 }
