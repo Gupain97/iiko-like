@@ -14,6 +14,9 @@ export const getActiveUsersController = async (req:Request, res: Response) => {
 
 export const closeShiftUserController = async (req: Request, res: Response) => {
     const userId = req.body.userId;
-
-    await closeShiftUser(userId);
+    const result = await closeShiftUser(userId);
+    if (result > 0) {
+        res.json(result)
+    } else { res.json("Смена закрыта!")};
+    
 }

@@ -20,22 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const user = JSON.parse(userRaw);
   
   // Заполняем данные пользователя
-  document.getElementById('userName').textContent = `${user.name} ${user.surname}`;
-  document.getElementById('userRole').textContent = `${user.role}`;
   
   // Навешиваем обработчики
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('user');
-    window.location.href = '/';
-  });
   
-  closeShiftBtn.addEventListener('click', async () => {
-    await closeShiftUser();
-  });
+  // closeShiftBtn.addEventListener('click', async () => {
+  //   await closeShiftUser();
+  // });
   
-  deliveryBtn.addEventListener('click', () => {
-    window.location.href = 'html/delivery.html';
-  });
+  // deliveryBtn.addEventListener('click', () => {
+  //   window.location.href = 'html/delivery.html';
+  // });
   
   // Обработчики для столов
   document.querySelectorAll('.table-cell').forEach(cell => {
@@ -57,18 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-async function closeShiftUser() {
-  const userRaw = localStorage.getItem('user');
-  const user = JSON.parse(userRaw);
+// async function closeShiftUser() {
+//   const userRaw = localStorage.getItem('user');
+//   const user = JSON.parse(userRaw);
 
-  const res = await fetch('/api/shifts/closeShiftUser', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ userId: user.id})
-  });
-  const data = await res.json();
+//   const res = await fetch('/api/shifts/closeShiftUser', {
+//     method: 'POST',
+//     headers: {'Content-Type': 'application/json'},
+//     body: JSON.stringify({ userId: user.id})
+//   });
+//   const data = await res.json();
 
-}      
+// }      
  
 
 async function renderActiveUsers() {
@@ -118,8 +112,7 @@ async function loadOrders(waiterId = null) {
     currentSelectWaiter = waiter.id;
     
   }
-  console.log('id', id);
-  console.log('currSel:', currentSelectWaiter);
+ 
 
 
     // ✅ Очищаем ВСЕ ячейки столов перед загрузкой новых данных

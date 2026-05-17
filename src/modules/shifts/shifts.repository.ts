@@ -7,6 +7,7 @@ export async function openShiftRepo(userId: number) {
 }
 export async function getUserStatusRepo(userId: number) { 
     const res =  await pool.query(`SELECT status FROM shifts WHERE user_id = $1 ORDER BY id DESC LIMIT 1 `, [userId]);
+    if (res.rows.length < 1 ) return;
  
     return res.rows[0].status;
 }

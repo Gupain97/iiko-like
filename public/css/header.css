@@ -1,0 +1,25 @@
+#menuBtn {
+  background: none;
+  color: rgb(217, 73, 73);
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+#logoutBtn {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.header {
+  height: 60px;
+  background: #2f3b52;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}

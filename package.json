@@ -9,7 +9,7 @@
     "dev:debug": "nodemon --exec node --inspect -r ts-node/register src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "migrate": "docker exec -i crm-postgres psql -U postgres -d crm_db < ./src/database/migrations/010_add_menu_item_id_to_order_items.sql"
+    "migrate": "docker exec -i crm-postgres psql -U postgres -d crm_db < ./src/database/migrations/011_add_shift_id.sql"
   },
   "keywords": [],
   "author": "",

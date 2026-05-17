@@ -13,13 +13,16 @@ export const requireRole = (role: Role ) => {
         if (!req.user) {
             return res.status(401).json({message: "Пользователь не зарегистрирован"})
         };
-        console.log(req.user);
 
         if (req.user.role !== role ) {
-            console.log('отработало отказ в доступе');
             return res.status(401).json({message: 'Отказано в доступе'})
         };
 
         next();
     };
 };
+
+// export const requireRoleForDelete = (req: AuthRequest, res: Response, next: NextFunction) => {
+    
+    
+// }

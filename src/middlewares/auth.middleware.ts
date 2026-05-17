@@ -9,7 +9,6 @@ export const authMiddleware = (
 ) => {
     const userId = req.headers['x-user-id'];
     const userRole = req.headers['x-user-role'];
-    console.log('мидлвар где-то работает',);
 
     if (!userId || !userRole) {
         return res.status(401).json({message: 'Not authenticated'}); 
