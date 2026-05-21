@@ -1,5 +1,6 @@
 import { Response, NextFunction } from "express";
 import { AuthRequest } from "../types/auth-request";
+import { ADMIN_ROLES } from "../modules/orders/order.services";
 
 
 export const checkWaiter = (
@@ -10,7 +11,7 @@ export const checkWaiter = (
         if (!req.user) {
             return res.status(401).json({message: "Пользователь не зарегистрирован"});
         };
-        if (req.user.id !== waiterId && req.user.role !== "MANAGER"  ) {
+        if (req.user.id !== waiterId && !ADMIN_ROLES.includes(req.user.role)  ) {
             return res.status(401).json({message: "Отказано в доступе"});
         };
 

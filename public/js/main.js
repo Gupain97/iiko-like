@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
  
   const user = JSON.parse(userRaw);
+  currentSelectWaiter = user.id;
   
   // Заполняем данные пользователя
   
@@ -36,33 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
     cell.addEventListener('click', () => {
       const tableId = cell.dataset.id;
       const userId = cell.dataset.waiterId;
-      console.log('currentSelectWaiter:', currentSelectWaiter);
       window.location.href = `/html/table.html?id=${tableId}&waiterId=${currentSelectWaiter}`;
     });
   });
   
   // Загружаем данные
   renderActiveUsers();
-  loadOrders();
+  loadOrders(user.id);
 });
 
-
-
-
-
-
-// async function closeShiftUser() {
-//   const userRaw = localStorage.getItem('user');
-//   const user = JSON.parse(userRaw);
-
-//   const res = await fetch('/api/shifts/closeShiftUser', {
-//     method: 'POST',
-//     headers: {'Content-Type': 'application/json'},
-//     body: JSON.stringify({ userId: user.id})
-//   });
-//   const data = await res.json();
-
-// }      
+     
  
 
 async function renderActiveUsers() {
@@ -84,12 +68,18 @@ async function renderActiveUsers() {
     // создаём элементы
     activeUsers.forEach(user => {
       const div = document.createElement("div");
-      div.className = "staff-item";
+      if (user.user_id != currentSelectWaiter ) {
+        div.classList = "staff-item"
+      } else {
+        div.classList = "current-user"
+      };
       div.textContent = `${user.name} ${user.surname}`;
 
       div.addEventListener("click", async () => {
-        // div.className = "activeUser"
-        await loadOrders(user.user_id)
+        div.classList = "current-user";
+        currentSelectWaiter = user.user_id
+        await renderActiveUsers();
+        await loadOrders(user.user_id);
       })
 
       staffList.appendChild(div);
@@ -110,6 +100,7 @@ async function loadOrders(waiterId = null) {
     const waiter = JSON.parse(localStorage.getItem('user'));
     id = waiter.id
     currentSelectWaiter = waiter.id;
+    
     
   }
  
@@ -161,7 +152,8 @@ async function loadOrders(waiterId = null) {
           break;
     }
   });
+  
     
-}
+};
 
  

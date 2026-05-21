@@ -1,5 +1,5 @@
 import { mapStopListItemsToService } from "./menu.mapper";
-import { getAllMenuRepo, getCategoriesRepo, getCurrentStopListRepo } from "./menu.repository";
+import { addItemToStopRepo, getAllMenuRepo, getCategoriesRepo, getCurrentStopListRepo } from "./menu.repository";
 
 
 export async function getAllMenu() {
@@ -15,5 +15,11 @@ export async function getAllMenu() {
 export async function getCurrentStopList() {
     const res = await getCurrentStopListRepo();
     return mapStopListItemsToService(res);
+}
+
+export async function addItemToStop(itemId: number) {
+    await addItemToStopRepo(itemId);
+    const res = getCurrentStopList();
+    return res;
 }
 

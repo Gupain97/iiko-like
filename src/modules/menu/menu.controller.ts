@@ -1,6 +1,6 @@
 
 import { Request, Response  } from "express";
-import { getAllMenu, getCurrentStopList } from "./menu.services";
+import { addItemToStop, getAllMenu, getCurrentStopList } from "./menu.services";
 
 
 export const getAllMenuController = async (req:Request, res: Response ) => {
@@ -12,8 +12,13 @@ export const getAllMenuController = async (req:Request, res: Response ) => {
 
 
 export const getCurrentStopListController = async (req:Request, res: Response) => {
-    console.log("контроллер отработал");
     const result = await getCurrentStopList();
-    console.log("result controller menu ", result);
+    res.json(result);
+}
+
+export const addItemToStopController = async (req:Request, res:Response) => {
+    console.log("Сработал контроллер меню")
+    const itemId = req.body.itemId; 
+    const result = await addItemToStop(itemId);
     res.json(result);
 }

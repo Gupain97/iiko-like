@@ -12,6 +12,9 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
     const existingOrder = await findOrderByOrderIdRepo(orderId)
     const order = mapOrderWithItems(existingOrder);
     const itemData = await findItemByIdRepo(menuItemId); // menu_item
+    if (itemData?.isActive !== true ) return {
+        order: mapOrderFullDTO(existingOrder)
+    };
 
     
     if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");

@@ -467,6 +467,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const div = document.createElement("div");
       div.className = "menu-item";
 
+      if (item.is_active !== true ) {
+        div.classList.add('stop-list');
+      }
+
       div.innerHTML = `
         <div class="menu-item-name">${item.name}</div>
         <div class="menu-item-price">${item.price / 100} ₽</div>
