@@ -303,3 +303,30 @@ button {
   font-size: 13px;
   color: #666;
 }
+
+/* стили блюд в стопе */
+.menu-item.disabled,
+.menu-item.stop-list {
+  background: #f5f5f5;  /* Затемненный фон */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.2s;
+  cursor: not-allowed;  /* Меняем курсор на "запрещено" */
+  position: relative;
+  opacity: 0.7;
+  overflow: hidden;
+}
+
+/* Перечеркивание крест-накрест */
+.menu-item.disabled::before,
+.menu-item.stop-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.3) 55%, transparent 55%);
+  pointer-events: none; /* Чтобы клик проходил сквозь затемнение */
+}

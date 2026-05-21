@@ -20,6 +20,7 @@ import { AppError } from '../../errors/AppErrors';
 import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../users/users.repository';
+import { Role } from '../users/users.types';
 
 
  
@@ -31,6 +32,11 @@ const ACTIVE_STATUSES : OrderStatus[] = [
     
 ]
 
+export const ADMIN_ROLES : Role[]= [
+    "MANAGER",
+    "DIRECTOR"
+]
+
 export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderWithNameDTO | undefined>{
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
@@ -40,8 +46,9 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
         return mapOrderFullDTO(existingOrder);
-    } else if (userRole && userRole === "MANAGER") {
+    } else if (userRole && ADMIN_ROLES.includes(userRole)) {
         const order = await getHimOrderByTableRepo(tableId, userId);
+        console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
       

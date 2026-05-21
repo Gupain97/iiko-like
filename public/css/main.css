@@ -62,18 +62,22 @@ body {
 }
 
 .current-user {
-  font-weight: bold;
-  margin-bottom: 20px;
+  padding: 10px;
+  border: 2px solid #6c7e6d;     /* зелёная рамка */
+  border-radius: 8px;
+  background: #2563eb;
+  margin-bottom: 8px;
+  cursor: pointer;
 }
 
 .staff-list {
   padding: 10px;
 }
 
-.delivery-list {
+/* .delivery-list {
   padding: 10px;
   border: 2px solid #04952d;
-}
+} */
 
 .staff-item {
   padding: 10px;

@@ -7,11 +7,14 @@ document.addEventListener("DOMContentLoaded", async () =>{
     const itemsList = document.getElementById("itemsList");
     const categoriesEl = document.getElementById("categories");
     const menuItemsEl = document.getElementById("menuItems");
+    const deleteBtn = document.querySelector("delete-btn");
 
     await loadStopList();
     await renderStopListItems();
     await loadMenu();
     console.log("current SList", currentStopList);
+
+  
 
 
     async function loadStopList() {
@@ -56,10 +59,31 @@ document.addEventListener("DOMContentLoaded", async () =>{
 
     row.innerHTML = `
       <td>${item.name}</td>
+      <td>${""}</td>
+      <td>${""}</td>
+      <td>${""}</td>
+      <td><button class="delete-btn" data-id="${item.id}">удалить</button></td>
     `;
+
     
     itemsList.appendChild(row);
-    });
+  });
+}
+deleteBtn.addEventListener('click', () =>{
+  deleteItemStop(item.id);
+})
+
+  async function deleteItemStop(itemId) {
+    try {
+      const res = await fetch(`/api/menu/delete-stop/`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({itemId})
+      })
+    } catch (err) {
+      console.error("Не удалось очистить позицию!", err);
+    }
+    
   }
 
 
@@ -112,15 +136,36 @@ function renderMenuItems(categoryId) {
       const div = document.createElement("div");
       div.className = "menu-item";
 
+      if (item.is_active !== true) { // исправить ДТО !
+        div.classList.add('stop-list');
+      }
+
       div.innerHTML = `
         <div class="menu-item-name">${item.name}</div>
         <div class="menu-item-price">${item.price / 100} ₽</div>
       `;
 
-      div.onclick = () => addItemToOrder(item.id);
+      div.onclick = () => addItemToStop(item.id);
 
       menuItemsEl.appendChild(div);
   });
+}
+
+async function addItemToStop(itemId) {
+  console.log("addToStop", itemId);
+  try {
+    const res = await fetch(`/api/menu/add-to-stop`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({itemId})
+    });
+
+    const data = await res.json();
+    currentStopList = data;
+    renderStopListItems();
+  } catch (err) {
+    console.error("Нельзя добавить блюдо в стоп лист", err);
+  }
 }
 
 
