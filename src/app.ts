@@ -8,6 +8,7 @@ import adminRoutes from './admin/admin.ruotes';
 import shiftsRoutes from './modules/shifts/shifts.routes';
 import deliveryRoutes from './modules/delivery/delivery.routes';
 import orderItemsRoutes from './modules/order-items/orderItems.routes';
+import stopListRoutes from './modules/stop-list/stop-list.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
 
@@ -37,6 +38,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/delivery', deliveryRoutes);
 
 app.use('/api/order-items', orderItemsRoutes);
+
+app.use('/api/stop-list', stopListRoutes);
 
 
 

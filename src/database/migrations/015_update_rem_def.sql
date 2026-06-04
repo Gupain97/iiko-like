@@ -1,0 +1,2 @@
+ALTER TABLE stop_list
+ALTER COLUMN remainder SET DEFAULT 0;

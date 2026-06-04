@@ -1,7 +1,9 @@
 import { AppError, ItemStatusError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
+import { getAllMenu } from "../menu/menu.services";
 import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
 import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
+import { checkDishInStop, checkDishRemainder, decrementRemainder } from "../stop-list/stop-list.services";
 import { getUserRoleRepo } from "../users/users.repository";
 import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
 
@@ -12,22 +14,38 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
     const existingOrder = await findOrderByOrderIdRepo(orderId)
     const order = mapOrderWithItems(existingOrder);
     const itemData = await findItemByIdRepo(menuItemId); // menu_item
-    if (itemData?.isActive !== true ) return {
-        order: mapOrderFullDTO(existingOrder)
-    };
+    const checkDish = await checkDishInStop(menuItemId);
+    const remainder = await checkDishRemainder(menuItemId);
+    let menu = await getAllMenu();
+    if (checkDish) {
+        return {
+        order: mapOrderFullDTO(existingOrder),
+        menu: menu
+        }
+    }
+    // if (itemData?.isActive !== true ) return {
+    //     order: mapOrderFullDTO(existingOrder)
+    // };
 
     
     if (!order || !itemData) throw new Error("ORDER_OR_ITEM_NOT_FOUND");
     if (order.status !== "OPEN" && order.status !== "PRINTED") throw new AppError("ORDER_NOT_OPEN!", 400);
+    if (remainder > 0 ) {
+        await decrementRemainder(menuItemId);
+    }
+
+    
 
 
     const checkAddedItem = await getAddedItemOrUndefinedRepo(itemData.id, orderId);
     if (checkAddedItem) {
         await addItemQuantityRepo(checkAddedItem.id);
         const upOrder = await findOrderByOrderIdRepo(orderId);
+        const menu = await getAllMenu();
         return {
             order : mapOrderFullDTO(upOrder),
-            addedItemId: checkAddedItem.id
+            addedItemId: checkAddedItem.id,
+            menu: menu
         };
     }
 
@@ -45,17 +63,18 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
     
     if (!item) throw new Error("ITEM_NOT_CREATED");
     
-    
-    
     const addedItem = await addItemRepo(item);
-
+    menu = await getAllMenu();
 
     const newOrder = await findOrderByOrderIdRepo(orderId);
     if (!newOrder) return mapOrderFullDTO(existingOrder);
 
+
     return  {
         order : mapOrderFullDTO(newOrder),
-        addedItemId: addedItem.id
+        addedItemId: addedItem.id,
+        menu: menu,
+        categoryId: menu.categories
     }; 
 }
 
@@ -65,6 +84,8 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
 export async function addItemQuantity(itemId: number, orderId: number) {
     const item = await  getItemByItemIdRepo(itemId);
     const menuItemId = item.menu_item_id;
+    const check = await checkDishInStop(menuItemId);
+    if (check) return;
 
     if (!item.printed) {
         await addItemQuantityRepo(itemId);
@@ -109,3 +130,4 @@ export async function getPrintedCashForWaiter(userId: number) {
     const res = await getPrintedCashForWaiterRepo(userId);
     return res;
 }
+

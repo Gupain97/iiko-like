@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let allItems = [];
   let currentOrder = null;
   let selectedItemId = null;
+  let selectCategoryId = 1;
  // let tableIsOpen = false;
 
 
@@ -137,7 +138,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
       
     currentOrder = await res.json();
-    console.log(currentOrder);
       waiterNameEl.textContent = currentOrder.waiterName + ' ' +  currentOrder.waiterSurname;
       tableNumberEl.textContent = currentOrder.tableNumber;
       await renderOrder();
@@ -168,8 +168,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await res.json();
       currentOrder = data.order;
       selectedItemId = data.addedItemId;
+      allItems = data.menu.items;
+     // categoryId = data.menu.categories[0].id;
+      
 
       await renderOrder();
+      await renderMenuItems(selectCategoryId);
 
     } catch (err) {
       console.error('Ошибка добавления', err);
@@ -403,11 +407,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   
     currentOrder.items.forEach(item => {
       const row = document.createElement('tr');
-      row.onclick = () => {
-        selectedItemId = item.id;
-      };
+      row.classList.add("itemRow");
+      row.dataset.id = item.id;
+
       if (currentOrder.status === "PRECHECK"){
-        row.classList.add('precheck')
+        row.classList.add('precheck');
       }
       
       else if (item.printed) {
@@ -415,18 +419,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         row.classList.add('added')
       }
+      row.onclick = () => {
+       // selectedItemId = item.id;
+        selectItem(item.id);
+        
+      };
 
       row.innerHTML = `
       <td>${item.name}</td>
       <td>${item.quantity}</td>
       <td>${item.price} ₽</td>
       <td>${item.total} ₽</td>
-      <td>${item.printedAt ? new Date(item.printedAt).toLocaleTimeString() : ''}</td>
+      <td>${item.printedAt ? new Date(item.printedAt).toLocaleString() : ''}</td>
     `;
+
 
     itemsList.appendChild(row);
     });
   }
+
+  function selectItem(itemId) {
+    if (selectedItemId) {
+      const prevSelected = document.querySelector(`.itemRow[data-id="${selectedItemId}"]`);
+      if (prevSelected) {
+        prevSelected.classList.remove('selected');
+      }
+    }
+    const newSelected = document.querySelector(`.itemRow[data-id="${itemId}"]`);
+    if (newSelected) {
+      newSelected.classList.add("selected");    
+    }
+
+  selectedItemId = itemId;
+
+}
 
   async function renderTotal() {
     if (!currentOrder) {
@@ -460,6 +486,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function renderMenuItems(categoryId) {
     menuItemsEl.innerHTML = "";
+    console.log(categoryId);
+    selectCategoryId = categoryId;
 
     const items = allItems.filter(i => i.category_id === categoryId);
 
@@ -467,13 +495,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const div = document.createElement("div");
       div.className = "menu-item";
 
-      if (item.is_active !== true ) {
+      if (item.is_stopped ) {
         div.classList.add('stop-list');
       }
 
       div.innerHTML = `
         <div class="menu-item-name">${item.name}</div>
         <div class="menu-item-price">${item.price / 100} ₽</div>
+        <div class="menu-item-remainder">${item.remainder || ''}</div>
       `;
 
       div.onclick = () => addItemToOrder(item.id);
