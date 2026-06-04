@@ -1,0 +1,2 @@
+ALTER TABLE stop_list
+ADD COLUMN remainder INTEGER

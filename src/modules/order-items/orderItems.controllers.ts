@@ -8,6 +8,7 @@ export const addItemToOrderControllerNew = async (req:Request, res: Response) =>
     const { menuItemId } = req.body;
     const orderId = Number(req.params.id);
     const order = await addItemFromDB(orderId, menuItemId);
+    // console.log(order);
     res.json({...order});
 }
 
