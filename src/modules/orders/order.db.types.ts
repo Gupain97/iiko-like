@@ -13,3 +13,11 @@ export interface OrderRow {
     items: [];
 
 }
+
+
+export interface OrderSlotRow {
+    id: number;
+    table_id: number;
+    table_number: number;
+    status: string;
+}

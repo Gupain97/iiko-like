@@ -1,8 +1,10 @@
 import { AppError, ItemStatusError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
 import { getAllMenu } from "../menu/menu.services";
+import { OrderDTO, OrderFullDTO } from "../orders/order.dto";
 import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
 import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
+import { getOrderById } from "../orders/order.services";
 import { checkDishInStop, checkDishRemainder, decrementRemainder } from "../stop-list/stop-list.services";
 import { getUserRoleRepo } from "../users/users.repository";
 import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
@@ -81,11 +83,11 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
 
 
 
-export async function addItemQuantity(itemId: number, orderId: number) {
+export async function addItemQuantity(itemId: number, orderId: number) : Promise<OrderDTO | null> {
     const item = await  getItemByItemIdRepo(itemId);
     const menuItemId = item.menu_item_id;
     const check = await checkDishInStop(menuItemId);
-    if (check) return;
+    if (check) return null;
 
     if (!item.printed) {
         await addItemQuantityRepo(itemId);
@@ -97,7 +99,7 @@ export async function addItemQuantity(itemId: number, orderId: number) {
     return mapOrderFullDTO(res);
 }
 
-export async function decrementItemQantity(itemId: number, orderId: number) {
+export async function decrementItemQantity(itemId: number, orderId: number): Promise<{ order: OrderFullDTO | null ; itemId: number | null ; }> {
     const item = await  getItemByItemIdRepo(itemId);
     if (item.printed) throw new ItemStatusError();
     let itId = null;
@@ -116,7 +118,9 @@ export async function decrementItemQantity(itemId: number, orderId: number) {
     
 }
 
-export async function deletItemFromOrder(itemId: number, orderId: number, userId: number) {
+export async function deletItemFromOrder(itemId: number, orderId: number, userId: number): Promise<OrderFullDTO | null> {
+    const order = await getOrderById(orderId);
+    if (!order || order.status === "PRECHECK") return order;
     const item = await getItemByItemIdRepo(itemId);
     const userRole = await getUserRoleRepo(userId);
     if (item.printed && userRole.role !== "MANAGER") throw new ItemStatusError();

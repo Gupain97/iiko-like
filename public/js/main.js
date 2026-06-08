@@ -68,7 +68,7 @@ async function renderActiveUsers() {
     // создаём элементы
     activeUsers.forEach(user => {
       const div = document.createElement("div");
-      if (user.user_id != currentSelectWaiter ) {
+      if (user.userId != currentSelectWaiter ) {
         div.classList = "staff-item"
       } else {
         div.classList = "current-user"
@@ -77,9 +77,9 @@ async function renderActiveUsers() {
 
       div.addEventListener("click", async () => {
         div.classList = "current-user";
-        currentSelectWaiter = user.user_id
+        currentSelectWaiter = user.userId;
         await renderActiveUsers();
-        await loadOrders(user.user_id);
+        await loadOrders(user.userId);
       })
 
       staffList.appendChild(div);
@@ -121,7 +121,7 @@ async function loadOrders(waiterId = null) {
 
   orders.forEach(slot => {
     const cell = document.querySelector(
-      `.table-cell[data-id="${slot.table_id}"]`
+      `.table-cell[data-id="${slot.tableSlot}"]`
     );
     
     if (!cell) return;
@@ -131,19 +131,19 @@ async function loadOrders(waiterId = null) {
     switch (slot.status) {
       case 'OPEN':
         cell.classList.add('open');
-        cell.textContent = slot.table_number;
+        cell.textContent = slot.tableNumber;
           
         break;
         
         case 'PRINTED':
           cell.classList.add('printed');
-          cell.textContent = slot.table_number;
+          cell.textContent = slot.tableNumber;
           
           break;
           
           case 'PRECHECK':
             cell.classList.add('prechecked');
-            cell.textContent = slot.table_number;
+            cell.textContent = slot.tableNumber;
         break;
         
         

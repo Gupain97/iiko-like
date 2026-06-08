@@ -6,6 +6,7 @@ import { orders } from "./order.storage";
 import { getItemsByOrderIdRepo } from "../order-items/orderItems.repository";
 import { mapOrderWithItems,  mapRowOrder } from "./order.mapper";
 import { OrderWithNameRow } from "./order.raw.types";
+import { OrderSlotRow } from "./order.db.types";
 
 
 export let orderIdSeq = 1;
@@ -60,21 +61,10 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWit
     return result.rows;
 
 }
-export async function getWaiterOrdersRepo(waiterId: number)  {
+export async function getWaiterOrdersRepo(waiterId: number) : Promise<OrderSlotRow[]>  {
     const result = await pool.query(
-        `SELECT * FROM orders WHERE status IN ($1, $2, $3) AND created_by = $4`, ["OPEN", "PRINTED", "PRECHECK" , waiterId]
+        `SELECT id, table_id, table_number, status, guests_count  FROM orders WHERE status IN ($1, $2, $3) AND created_by = $4`, ["OPEN", "PRINTED", "PRECHECK" , waiterId]
     )
-    // return result.rows.map(row => ({
-    //     id: row.id,
-    //     tableNumber: row.table_number,
-    //     guestsCount: row.guests_count,
-    //     tableId: row.table_id,
-    //     status: row.status,
-    //     createdAt: row.created_at,
-    //     precheckAt: row.prechecked_at,
-    //     closedAt: row.closed_at,
-    //     items: []
-    // }));
     return result.rows;
 }
 
