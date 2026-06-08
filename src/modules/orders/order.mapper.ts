@@ -1,6 +1,6 @@
 import { Order, OrderItem } from "./order.types";
-import { OrderDTO, OrderItemDTO, OrderSlotsDto, OrderWithNameDTO } from "./order.dto";
-import { OrderRow } from "./order.db.types";
+import { OrderDTO, OrderItemDTO, OrderSlotsDTO, OrderFullDTO } from "./order.dto";
+import { OrderRow, OrderSlotRow } from "./order.db.types";
 import { OrderWithNameRow } from "./order.raw.types";
 
 
@@ -101,13 +101,13 @@ export function mapOrderWithItems(rows: any[]) : Order | undefined {
 //////////////////////////////////////////////
 
 
-export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | undefined {
+export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderFullDTO | null {
 
-    if (rows.length === 0) return undefined; 
+    if (rows.length === 0) return null; 
 
     const first = rows[0];
 
-    const order : OrderWithNameDTO = {
+    const order : OrderFullDTO = {
         id: first.order_id,
         status: first.status,
         tableId: first.table_id,
@@ -147,7 +147,38 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderWithNameDTO | u
     return order;
 }
 
-// export function mapOrdersToSlotDTO(rows: any): OrderSlotsDto[] {
+
+
+export function mapOrderSlotDTO(rows: OrderSlotRow[] ) : OrderSlotsDTO[]{
+    // const res = [];
+    // for (const row of rows ) {
+    //     res.push({
+    //         id: row.id,
+    //         tableSlot: row.table_id,
+    //         tableNumber: row.table_number,
+    //         status: row.status,
+    //         papus: row.guest_count 
+    //     })
+    // }
+    // return res
+
+    // return rows.map( row => {
+    //     const dto : OrderSlotsDTO = {
+    //         id: row.id,
+    //         tableSlot: row.table_id,
+    //         tableNumber: row.table_number,
+    //         status: row.status
+            
+    //     };
+    //     return dto;
+
+    return rows.map(row => ({
+        id: row.id,
+        tableSlot: row.table_id,
+        tableNumber: row.table_number,
+        status: row.status
+
+    } satisfies OrderSlotsDTO));
+
     
-    
-// }
+}

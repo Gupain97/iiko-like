@@ -1,7 +1,7 @@
 //import { orders } from './order.storage'
 import { NewOrder, Order } from './order.types'
-import { mapOrderItemToDTO, mapOrderToDTO, mapRowOrder, mapOrderFullDTO, mapOrderWithItems } from './order.mapper';
-import { OrderDTO, OrderItemDTO, OrderWithNameDTO} from './order.dto';
+import {  mapOrderToDTO, mapOrderFullDTO, mapOrderWithItems, mapOrderSlotDTO } from './order.mapper';
+import { OrderDTO, OrderFullDTO, OrderSlotsDTO} from './order.dto';
 import { OrderStatus } from '../../domain/orderStatus';
 
 import { findOrderByOrderIdRepo,
@@ -37,7 +37,7 @@ export const ADMIN_ROLES : Role[]= [
     "DIRECTOR"
 ]
 
-export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderWithNameDTO | undefined>{
+export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
@@ -96,7 +96,7 @@ export async function printOrder(orderId : number) : Promise<OrderDTO> {
 }
 
 
-export async function precheckOrder(orderId: number): Promise<OrderWithNameDTO | undefined> {
+export async function precheckOrder(orderId: number): Promise<OrderFullDTO | null> {
 
     const order = await findOrderByOrderIdRepo(orderId);
  
@@ -119,7 +119,7 @@ export async function cancelPrecheckOrder(orderId: number) {
 }
 
 
-export async function closeOrderByOrderId(orderId: number, userId: number): Promise<OrderWithNameDTO | undefined> {
+export async function closeOrderByOrderId(orderId: number, userId: number): Promise<OrderFullDTO | null > {
 
     const order = await findOrderByOrderIdRepo(orderId);
     
@@ -134,9 +134,9 @@ export async function closeOrderByOrderId(orderId: number, userId: number): Prom
     return mapOrderFullDTO(order);// исправить
 }
 
-export async function getOrderById(orderId: number): Promise<OrderDTO | undefined> {
+export async function getOrderById(orderId: number): Promise<OrderFullDTO | null > {
     const order = await findOrderByOrderIdRepo(orderId);
-    if (!order) throw new Error("OEDER_NOT_FOUND");
+    if (!order) throw new Error("ORDER_NOT_FOUND");
     return mapOrderFullDTO(order);
 }
 
@@ -147,12 +147,7 @@ export async function getActiveOrders(): Promise<Order[] | undefined> {
     
 }
 
-export async function getWaiterOrders(waiterId: number) {
+export async function getWaiterOrders(waiterId: number) : Promise<OrderSlotsDTO[]> {
     const orders = await getWaiterOrdersRepo(waiterId);
-    return orders; 
+    return mapOrderSlotDTO(orders); 
 }
-
-// export async function getOpenCash(userId: number) {
-//     const res = await getOpenCashRepository(userId);
-    
-// }

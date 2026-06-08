@@ -1,12 +1,14 @@
-import { mapStopListItemsToService } from "./menu.mapper";
+
+import { mapMenuDTO } from "./menu.mapper";
 import {getAllMenuRepo, getCategoriesRepo} from "./menu.repository";
+import { AllMenuDTO, Categories } from "./menu.types";
 
 
-export async function getAllMenu() {
-    const items = await getAllMenuRepo();
+export async function getAllMenu(): Promise<{ items: AllMenuDTO[]; categories: Categories[]}> {
+    const menu = await getAllMenuRepo();
     const categories = await getCategoriesRepo();
     return {
-        items,
+        items: mapMenuDTO(menu),
         categories
     };
 }

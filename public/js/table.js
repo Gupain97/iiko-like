@@ -489,13 +489,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log(categoryId);
     selectCategoryId = categoryId;
 
-    const items = allItems.filter(i => i.category_id === categoryId);
+    const items = allItems.filter(i => i.categoryId === categoryId);
 
     items.forEach(item => {
       const div = document.createElement("div");
       div.className = "menu-item";
 
-      if (item.is_stopped ) {
+      if (item.isStopped ) {
         div.classList.add('stop-list');
       }
 

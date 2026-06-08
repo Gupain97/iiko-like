@@ -1,17 +1,18 @@
 import { pool } from "../../config/db";
+import { ActiveUsersRow } from "./shifts.types";
 
 
 export async function openShiftRepo(userId: number) {
     const user = await pool.query(`
         INSERT INTO shifts (user_id, status) VALUES ($1, $2) RETURNING *`, [userId, "OPEN"]);
 }
-export async function getUserStatusRepo(userId: number) { 
+export async function getUserStatusRepo(userId: number) : Promise<string|null>{ 
     const res =  await pool.query(`SELECT status FROM shifts WHERE user_id = $1 ORDER BY id DESC LIMIT 1 `, [userId]);
-    if (res.rows.length < 1 ) return;
+    if (res.rows.length < 1 ) return null;
  
     return res.rows[0].status;
 }
-export async function getActiveUsersRepo() {
+export async function getActiveUsersRepo(): Promise<ActiveUsersRow[]> {
     const res = await pool.query(`
         SELECT
         u.id AS user_id,

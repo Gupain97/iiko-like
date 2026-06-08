@@ -27,7 +27,7 @@ export type OrderDTO = {
 
 
 //////////
-export type OrderWithNameDTO = {
+export type OrderFullDTO = {
     id: number;
     tableNumber: number | undefined;
     guestsCount: number | undefined;
@@ -43,6 +43,9 @@ export type OrderWithNameDTO = {
     
 }
 
-export type OrderSlotsDto = {
+export type OrderSlotsDTO = {
     id: number;
+    tableSlot: number;
+    tableNumber: number;
+    status: string;
 }
