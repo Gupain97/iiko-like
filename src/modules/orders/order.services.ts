@@ -21,6 +21,7 @@ import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../users/users.repository';
 import { Role } from '../users/users.types';
+import { stationService } from '../station/station.services';
 
 
  
@@ -38,6 +39,7 @@ export const ADMIN_ROLES : Role[]= [
 ]
 
 export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
+
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
@@ -78,18 +80,24 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     return mapOrderFullDTO(retOrder);
 }
 
-export async function printOrder(orderId : number) : Promise<OrderDTO> {
+export async function printOrder(orderId : number) : Promise<OrderFullDTO | null > {
 
     const order = await findOrderByOrderIdRepo(orderId);
-    if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); 
+    if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
 
-    const updateOrder = await markItemsPrintedRepo(orderId);
-    const res = mapOrderWithItems(updateOrder);
+    const markItems = await markItemsPrintedRepo(orderId);
+    // console.log('upOrder in orderService', markItems);
+    //const res = mapOrderWithItems(updateOrder);
+    const ticketId = await stationService.addOrder(orderId);
+    await stationService.addItem(markItems, ticketId);
+    await stationService.getTickets();
     
-    if (!res) throw new Error('break update order');
+    //if (!res) throw new Error('break update order');
+    const res = await findOrderByOrderIdRepo(orderId);
+    
     
 
-    return mapOrderToDTO(res);
+    return mapOrderFullDTO(res);
     
    
 

@@ -37,48 +37,49 @@ export async function addItemRepo(item: any ): Promise<OrderItem> {
 
 
 export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
-    await pool.query(
+    const res = await pool.query(
         `UPDATE order_items SET printed = true,
         printed_at = NOW()
         WHERE printed = false 
-        AND order_id = $1`,
+        AND order_id = $1
+        RETURNING *`,
         [orderId]
-
+        
     );
     
-    const upOrders = await pool.query(`UPDATE orders SET status = $1 WHERE status = 'OPEN' AND id = $2 RETURNING *`,["PRINTED", orderId]);
+    await pool.query(`UPDATE orders SET status = $1 WHERE status = 'OPEN' AND id = $2 RETURNING *`,["PRINTED", orderId]);
+    
+    return res.rows;
+    // const result = await pool.query(
+    //     `
+    //     SELECT 
+    //     o.id AS order_id,
+    //     o.status,
+    //     o.table_number,
+    //     o.guests_count,
+    //     o.table_id,
+    //     o.created_at,
+    //     o.prechecked_at,
+    //     o.closed_at,
 
-    const result = await pool.query(
-        `
-        SELECT 
-        o.id AS order_id,
-        o.status,
-        o.table_number,
-        o.guests_count,
-        o.table_id,
-        o.created_at,
-        o.prechecked_at,
-        o.closed_at,
 
+    //     oi.id AS item_id,
+    //     oi.order_id AS order_item_order_id,
+    //     oi.name AS item_name,
+    //     oi.quantity,
+    //     oi.printed_at,
+    //     oi.printed,
+    //     oi.price
 
-        oi.id AS item_id,
-        oi.order_id AS order_item_order_id,
-        oi.name AS item_name,
-        oi.quantity,
-        oi.printed_at,
-        oi.printed,
-        oi.price
-
-        FROM orders o
-        LEFT JOIN order_items oi ON oi.order_id = o.id 
-        WHERE o.id = $1
-        AND o.status IN ('OPEN', 'PRINTED') 
-        `, [orderId]
-    );
+    //     FROM orders o
+    //     LEFT JOIN order_items oi ON oi.order_id = o.id 
+    //     WHERE o.id = $1
+    //     AND o.status IN ('OPEN', 'PRINTED') 
+    //     `, [orderId]
+    // );
 
  
 
-    return result.rows;
     
 
 }
