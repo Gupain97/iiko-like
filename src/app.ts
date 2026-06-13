@@ -11,6 +11,7 @@ import orderItemsRoutes from './modules/order-items/orderItems.routes';
 import stopListRoutes from './modules/stop-list/stop-list.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
+import  stationRoutes  from './modules/station/station.routes';
 
 
 
@@ -41,6 +42,8 @@ app.use('/api/order-items', orderItemsRoutes);
 
 app.use('/api/stop-list', stopListRoutes);
 
+app.use('/api/station', stationRoutes);
+
 
 
 
@@ -56,6 +59,10 @@ app.get('/admin', (req, res)  => {
     res.sendFile(path.join(__dirname, '../public/html/admin.html'));
 });
 
+
+app.get('/station', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/html/station.html'));
+})
 pool.query("SELECT NOW()")
   .then(res => console.log("DB connected:", res.rows[0]))
   .catch(err => console.error("DB error:", err));
