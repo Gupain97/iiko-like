@@ -15,14 +15,27 @@ document.addEventListener("DOMContentLoaded", async () =>{
     await renderStopListItems();
     await loadMenu();
 
-
     document.getElementById('itemsList').addEventListener('click', (e) => {
-      if (e.target.classList.contains('delete-btn')) {
+      if (e.target.classList.contains('addRemainder-btn')) {
+        const itemId = e.target.dataset.id;
+        addRemainder(itemId);
+        e.stopPropagation();
+      } else if (e.target.classList.contains('delete-btn')) {
         const itemId = e.target.dataset.id;
         deleteItemStop(itemId);
         e.stopPropagation();
       }
     })
+
+
+
+    // document.getElementById('itemsList').addEventListener('click', (e) => {
+    //   if (e.target.classList.contains('delete-btn')) {
+    //     const itemId = e.target.dataset.id;
+    //     deleteItemStop(itemId);
+    //     e.stopPropagation();
+    //   }
+    // })
 
     remainderBtn.addEventListener('click', async () => {
       await addRemainder(selectedItemId);
@@ -70,13 +83,13 @@ document.addEventListener("DOMContentLoaded", async () =>{
         
         row.onclick = () => {
          selectedItemId = item.id;
-         addRemainder(selectedItemId);
+        // addRemainder(selectedItemId);
          console.log(selectedItemId);
         };
         
         
         row.innerHTML = `
-        <td>${item.name}</td>
+        <td><button class="addRemainder-btn" data-id="${item.id}">${item.name}</button></td>
         <td>${item.createdBy}</td>
         <td>${item.remainder || 0}</td>
         <td>${item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}</td>
@@ -159,14 +172,13 @@ function renderCategories(categories) {
 
 function renderMenuItems(categoryId) {
     menuItemsEl.innerHTML = "";
-
-    const items = allItems.filter(i => i.category_id === categoryId).sort((a,b) => a.id - b.id );
+    const items = allItems.filter(i => i.categoryId === categoryId).sort((a,b) => a.id - b.id );
 
     items.forEach(item => {
       const div = document.createElement("div");
       div.className = "menu-item";
 
-      if (item.is_stopped ) { // исправить ДТО !
+      if (item.isStopped ) { // исправить ДТО !
         div.classList.add('stop-list');
       }
 
@@ -191,6 +203,7 @@ async function addItemToStop(itemId) {
     });
     const data = await res.json();
     currentStopList = data.currentStopList;
+    console.log(data);
     const catId = data.catId;
     await renderStopListItems();
     await loadMenu(catId);
@@ -210,7 +223,7 @@ async function addRemainder(dishId) {
 
   currentStopList = await res.json();
   await renderStopListItems();
-   await loadMenu();
+  await loadMenu();
 }
 
 

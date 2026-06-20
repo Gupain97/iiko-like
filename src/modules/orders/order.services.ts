@@ -22,6 +22,12 @@ import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../users/users.repository';
 import { Role } from '../users/users.types';
 import { stationService } from '../station/station.services';
+// import { WebSocketService } from '../../websocet/firstSocet';
+// import { wss } from '../../index';
+
+import { webSocketService } from '../../bootstrap';    
+
+
 
 
  
@@ -50,7 +56,7 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         return mapOrderFullDTO(existingOrder);
     } else if (userRole && ADMIN_ROLES.includes(userRole)) {
         const order = await getHimOrderByTableRepo(tableId, userId);
-        console.log("userRole:", userRole, ADMIN_ROLES);
+      //  console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
       
@@ -90,7 +96,8 @@ export async function printOrder(orderId : number) : Promise<OrderFullDTO | null
     //const res = mapOrderWithItems(updateOrder);
     const ticketId = await stationService.addOrder(orderId);
     await stationService.addItem(markItems, ticketId);
-    await stationService.getTickets();
+   // await stationService.getTickets();
+    webSocketService.sendMessage('message');
     
     //if (!res) throw new Error('break update order');
     const res = await findOrderByOrderIdRepo(orderId);

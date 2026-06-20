@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "../types/auth-request";
+import { AuthRequest } from "../modules/auth/auth.types/auth-request";
 import { ADMIN_ROLES } from "../modules/orders/order.services";
 
 

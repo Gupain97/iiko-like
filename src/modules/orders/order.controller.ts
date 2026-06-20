@@ -15,6 +15,8 @@ import {
 
 export const getOrdersController = async (req: Request, res: Response) => {
     const waiterId = Number(req.params.id); 
+    const cook = req.cookies;
+    console.log('coockie in backend:', cook);
     const orders = await getWaiterOrders(waiterId);
     res.json(orders);
 };

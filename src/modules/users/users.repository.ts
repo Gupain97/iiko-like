@@ -11,3 +11,10 @@ export async function getUserRoleRepo(userId: number) {
     const res = await pool.query(`SELECT role FROM users WHERE id = $1`, [userId]);
     return res.rows[0];
 }
+
+export async function getUserForKeyRepo(key: string) {
+    
+    
+}
+
+

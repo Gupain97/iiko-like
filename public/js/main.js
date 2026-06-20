@@ -116,7 +116,9 @@ async function loadOrders(waiterId = null) {
   });
 
 
-  const res = await fetch(`/api/orders/${id}`);
+  const res = await fetch(`/api/orders/${id}`, {
+    credentials: 'include'
+  });
   const orders = await res.json();
 
   orders.forEach(slot => {

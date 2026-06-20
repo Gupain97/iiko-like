@@ -2,6 +2,12 @@ import { pool } from "../../config/db";
 import { StationRow } from "./station.types";
 
 export class StationRepository {
+
+
+    async getStations() {
+        const res = await pool.query(`SELECT * FROM station`);
+        return res.rows;
+    }
     
     async getData() { 
         return "getingData Fropm repository";
@@ -48,7 +54,6 @@ export class StationRepository {
 
 
     async getTickets() : Promise<StationRow[]> {
-        console.log("сработал тикет");
         const res = await pool.query(`
             SELECT
             t.id,
@@ -79,7 +84,6 @@ export class StationRepository {
             WHERE t.status = $1
             
             `, ['NEW']);
-            console.log('full', res.rows);
 
             return res.rows
     }

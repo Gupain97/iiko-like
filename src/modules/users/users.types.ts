@@ -6,4 +6,4 @@ export interface NewUser {
 
 }
 
-export type Role = ("MANAGER" | "WAITER" | "DIRECTOR")
+export type Role = ("MANAGER" | "WAITER" | "DIRECTOR" | "STATION");

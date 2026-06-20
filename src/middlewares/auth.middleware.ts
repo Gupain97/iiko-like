@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Role } from "../modules/users/users.types";
-import { AuthRequest } from "../types/auth-request";
+import { AuthRequest } from "../modules/auth/auth.types/auth-request";
 
 export const authMiddleware = (
     req: AuthRequest,

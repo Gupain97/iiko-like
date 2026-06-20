@@ -20,21 +20,27 @@ export class StationService {
 
         for (const i of items ) {
             await this.stationRepo.addItem(ticketId, i.id);
-        }
+        };
 
-    }
+    };
 
 
     async getItem() {
         const res = await this.stationRepo.getItem();
         // console.log(res);
         
-    }
+    };
     
     
     async getTickets() : Promise<StationTicketDTO[]> {
+
         const res = await this.stationRepo.getTickets();
         return mapTicketDTO(res);;
+    };
+
+    async getStations() {
+        const res = await this.stationRepo.getStations();
+        return res;
     }
 }
 

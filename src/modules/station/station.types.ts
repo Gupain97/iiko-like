@@ -2,6 +2,13 @@ export type StationItemsStatus = ('NEW' | 'READY' | 'GIVEN');
 export type StationTicketStatus = ('NEW'| 'READY');
 
 
+export interface Station {
+    id: number;
+    name: string;
+    pin : number;
+}
+
+
 export interface StationRow {
     id: number;
     ticket_status: StationTicketStatus;

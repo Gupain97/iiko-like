@@ -5,6 +5,7 @@ const service = new StationService();
 
 
 export const getItemsController = async (req: Request, res: Response) => {
+   // const stationId = Number(req.params.stationId);
     const result = await service.getTickets();
     res.json(result);
     

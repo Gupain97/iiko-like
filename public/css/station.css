@@ -4,3 +4,95 @@ body {
   background-color: #f5f5f5;
   color: #222;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #1f2937;
+    font-family: Arial, sans-serif;
+    color: white;
+    padding: 20px;
+}
+
+.orders-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    background: #ffffff;
+    color: #111827;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+
+.order-header {
+    background: #111827;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 24px;
+}
+
+.label {
+    font-size: 12px;
+    opacity: .7;
+    text-transform: uppercase;
+}
+
+.value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.order-items {
+    padding: 10px 0;
+}
+
+.dish-item {
+    padding: 18px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dish-item:last-child {
+    border-bottom: none;
+}
+
+.dish-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dish-name {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.dish-qty {
+    font-size: 32px;
+    font-weight: bold;
+    color: #dc2626;
+}
+
+.dish-comment {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fef3c7;
+    border-left: 5px solid #f59e0b;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.empty-state {
+    text-align: center;
+    font-size: 32px;
+    color: white;
+    margin-top: 100px;
+}
