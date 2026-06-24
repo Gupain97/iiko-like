@@ -7,11 +7,6 @@ export class StationRepository {
     async getStations() {
         const res = await pool.query(`SELECT * FROM station`);
         return res.rows;
-    }
-    
-    async getData() { 
-        return "getingData Fropm repository";
-        
     };
 
 
@@ -43,7 +38,9 @@ export class StationRepository {
             FROM station_ticket_items ti
             LEFT JOIN order_items oi ON oi.id = ti.order_item_id
             LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id
+            LEFT JOIN station_categories sc ON mi.category_id = sc.category_id
             WHERE status = $1
+            
 
             `, ['NEW']);
 

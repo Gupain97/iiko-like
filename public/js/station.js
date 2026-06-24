@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const res = await fetch(`/api/station`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify({ station })
+            credentials: 'include'
         });
 
         currentDishes = await res.json();;

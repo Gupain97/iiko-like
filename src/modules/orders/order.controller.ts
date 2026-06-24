@@ -22,13 +22,14 @@ export const getOrdersController = async (req: Request, res: Response) => {
 };
 
 export const createOrGetOrderController = async (req: Request, res: Response) => {
+        const sessionId = req.cookies.sessionId;
 
         const tableId = Number(req.body.tableId);
         const userId = Number(req.body.waiterId);
         const guestsCount = Number(req.body.guestsCount);
         const tableNumber = Number(req.body.tableNumber);
 
-        const order = await createOrGetOrder(tableId, userId, guestsCount, tableNumber);
+        const order = await createOrGetOrder(tableId, userId, sessionId, guestsCount, tableNumber);
  
         res.json(order);
     

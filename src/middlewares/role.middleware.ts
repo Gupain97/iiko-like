@@ -15,7 +15,6 @@ export const requireRole = (role: Role[] ) => {
         };
 
         if (!role.includes(req.user.role) ) {
-            console.log("role:", role, "req.user.role:", req.user.role)
             return res.status(401).json({message: 'Отказано в доступе'})
         };
 

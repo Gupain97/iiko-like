@@ -1,4 +1,5 @@
 import { pool } from "../../config/db";
+import { Role } from "./users.types";
 
 
 // export async function getActiveUsersRepo() {

@@ -6,10 +6,6 @@ import { StationTicketDTO } from "./station.types";
 export class StationService {
     private readonly stationRepo = new StationRepository;
 
-    async getData() {
-        const data = new StationRepository();
-        const res = data.getData();
-    };
     
     async addOrder(orderId: number) {
         const res  = await this.stationRepo.addOrder(orderId);

@@ -1,9 +1,9 @@
 import { pool } from "../../config/db";
 import { openShift } from "../shifts/shifts.services";
-import { Role } from "../users/users.types";
+import { Role, UserRaw } from "../users/users.types";
 import { stationService } from "../station/station.services";
 import { v4 as uuidv4} from 'uuid';
-import { deleteSessionRepo, openSessionRepository } from "./auth.repository";
+import { deleteSessionRepo, getUserForSessionIdRepo, openSessionRepository } from "./auth.repository";
 
 type UserRole = Role; 
 
@@ -74,6 +74,11 @@ export const loginByPin = async (pin : string): Promise<{user: Omit< User, 'pin'
     return { user: safeUser, workSpace, sessionId}
 };
 
+export async function getUserForSessionId(sessionId: string): Promise<UserRaw> {
+    const res = await getUserForSessionIdRepo(sessionId);
+    return res;
+    
+}
 
 
 export async function deleteSession(sessionId: string) {

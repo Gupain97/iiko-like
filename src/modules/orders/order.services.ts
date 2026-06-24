@@ -14,7 +14,7 @@ import { findOrderByOrderIdRepo,
          updateStatusOrderRepo,
          getHimOrderByTableRepo,
         } from './order.repository';
-import { findTableByTableIdRepo } from '../tables/tables.repository'
+//import { findTableByTableIdRepo } from '../tables/tables.repository'
 ;
 import { AppError } from '../../errors/AppErrors';
 import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
@@ -26,6 +26,7 @@ import { stationService } from '../station/station.services';
 // import { wss } from '../../index';
 
 import { webSocketService } from '../../bootstrap';    
+import { getUserForSessionId } from '../auth/auth.service';
 
 
 
@@ -44,12 +45,13 @@ export const ADMIN_ROLES : Role[]= [
     "DIRECTOR"
 ]
 
-export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
+export async function createOrGetOrder(tableId: number, userId: number,sessionId:string, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
 
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
     const userRole = await getUserRoleRepo(userId);
+   // const user = await getUserForSessionId(sessionId);
     
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
@@ -59,10 +61,17 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
       //  console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
+
+    console.log("existingOrder", existingOrder)
       
-    const existingTable = await findTableByTableIdRepo(tableId);
-    if (!existingTable?.isOpen) {
-        if(!guestsCount){
+    // const existingTable = await findOrderByTableRepo(tableId);
+    // if (!existingTable?.isOpen) {
+    //     if(!guestsCount){
+    //         throw new AppError('GUEST_COUNT_REQUIRED!', 400);
+    //     }
+    // }
+    if (existingOrder.length < 1 ) {
+        if (!guestsCount) {
             throw new AppError('GUEST_COUNT_REQUIRED!', 400);
         }
     }

@@ -174,6 +174,7 @@ export async function getHimOrderByTableRepo(tableId: number, userId: number ) :
 
 
 export async function saveOrderRepo(order: NewOrder) {
+    console.log("order repository", order);
     const result = await pool.query(
         `INSERT INTO orders
         (table_id, status, created_at, prechecked_at, closed_at, created_by, guests_count, table_number)

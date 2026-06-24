@@ -7,3 +7,12 @@ export interface NewUser {
 }
 
 export type Role = ("MANAGER" | "WAITER" | "DIRECTOR" | "STATION");
+
+
+export interface UserRaw {
+    id : number,
+    name : string,
+    surname: string,
+    role: Role
+    
+}

@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const waiterId = urlParams.get('waiterId');
       let res = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id, 'x-user-role': user.role },
+        headers: { 'Content-Type': 'application/json'},
         credentials: 'include',
         body: JSON.stringify({ tableId , waiterId: waiterId})
       });
