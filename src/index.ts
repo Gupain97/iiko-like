@@ -1,7 +1,7 @@
 import { app } from './app'; 
 import './websocket/firstSocet';
 
-const PORT = 3000;
+const PORT = 8080;
 
 
 app.listen(PORT, "0.0.0.0",  () => {

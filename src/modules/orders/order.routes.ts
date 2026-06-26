@@ -17,7 +17,7 @@ import { checkWaiter } from '../../middlewares/waiter.middleware';
 
 const router = express.Router();
 
-router.get('/:id', getOrdersController);
+router.get('/:id', authMiddleware, getOrdersController);
 
 router.post('/', authMiddleware, checkWaiter, asyncHandler(createOrGetOrderController));
  
@@ -26,7 +26,7 @@ router.post('/', authMiddleware, checkWaiter, asyncHandler(createOrGetOrderContr
 
  
 
-router.post('/print', asyncHandler(printOrderController));
+router.post('/print', authMiddleware, asyncHandler(printOrderController));
 
 router.post('/precheck', asyncHandler(prechekOrderController));
 

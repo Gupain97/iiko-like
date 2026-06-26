@@ -61,15 +61,6 @@ export async function createOrGetOrder(tableId: number, userId: number,sessionId
       //  console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
-
-    console.log("existingOrder", existingOrder)
-      
-    // const existingTable = await findOrderByTableRepo(tableId);
-    // if (!existingTable?.isOpen) {
-    //     if(!guestsCount){
-    //         throw new AppError('GUEST_COUNT_REQUIRED!', 400);
-    //     }
-    // }
     if (existingOrder.length < 1 ) {
         if (!guestsCount) {
             throw new AppError('GUEST_COUNT_REQUIRED!', 400);
@@ -101,18 +92,12 @@ export async function printOrder(orderId : number) : Promise<OrderFullDTO | null
     if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
 
     const markItems = await markItemsPrintedRepo(orderId);
-    // console.log('upOrder in orderService', markItems);
-    //const res = mapOrderWithItems(updateOrder);
     const ticketId = await stationService.addOrder(orderId);
     await stationService.addItem(markItems, ticketId);
-   // await stationService.getTickets();
     webSocketService.sendMessage('message');
     
-    //if (!res) throw new Error('break update order');
     const res = await findOrderByOrderIdRepo(orderId);
     
-    
-
     return mapOrderFullDTO(res);
     
    

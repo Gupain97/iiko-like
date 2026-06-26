@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const stationRaw = localStorage.getItem('user');
-    if (!stationRaw) {
-        window.location.hred = '/';
-    };
+    // const stationRaw = localStorage.getItem('user');
+    // if (!stationRaw) {
+    //     window.location.hred = '/';
+    // };
 
-    const station = JSON.parse(stationRaw);
-    let stationId = station.id;
+    // const station = JSON.parse(stationRaw);
+    // let stationId = station.id;
 
     const dishList = document.getElementById('dishList');
     const socket = new WebSocket('ws://localhost:3001');
@@ -25,10 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!dishList) console.error("dishList Not Found");
     
-    await loadDishes();
-
-
-
     async function loadDishes() {
         const res = await fetch(`/api/station`, {
             method: 'POST',
@@ -40,49 +36,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         await renderDishes();
 
         
-    }
-
-
-    // async function renderDishes() {
-
-
-    //     if (!currentDishes) {
-    //         dishList.innerHTML = `
-    //         <tr>
-    //             <td colspan="5">Нет заказов)</td>
-    //         </tr>`
-
-    //     return;
-            
-    //     }
-
-    //     currentDishes.forEach(ticket => {
-    //         const row = document.createElement('tr');
-
-
-    //         row.innerHTML= `
-    //         <td>${ticket.surname}</td>
-    //         <td>${ticket.createdAt}</td>
-    //         <td>Стол № ${ticket.tableNumber}</td>
-    //         <td>
-    //             <ul>
-    //                 ${ticket.items.map(dish => `
-    //                     <li>
-    //                         ${dish.name}
-    //                         ${dish.quantity}
-    //                     </li>
-    //                     `).join('')}
-    //             </ul>
-    //         </td>
-            
-    //         `;
-            
-        
-    //     dishList.appendChild(row);
-            
-    //     });
-        
-    // }
+    };
+ 
     async function renderDishes() {
 
     dishList.innerHTML = '';

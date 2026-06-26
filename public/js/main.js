@@ -11,13 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const deliveryBtn = document.querySelector('.deliveryBtn');
   
   // Проверка авторизации - первым делом
-  const userRaw = localStorage.getItem('user');
-  if (!userRaw) {
-    window.location.href = '/';
-    return;
-  }
+   const userRaw = localStorage.getItem('user');
+  // if (!userRaw) {
+  //   window.location.href = '/';
+  //   return;
+  // }
  
   const user = JSON.parse(userRaw);
+  console.log(user);
   currentSelectWaiter = user.id;
   
   // Заполняем данные пользователя

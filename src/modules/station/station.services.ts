@@ -19,25 +19,23 @@ export class StationService {
         };
 
     };
-
-
-    async getItem() {
-        const res = await this.stationRepo.getItem();
-        // console.log(res);
-        
-    };
     
     
-    async getTickets() : Promise<StationTicketDTO[]> {
+    async getTickets(stationId: number) : Promise<StationTicketDTO[]> {
 
-        const res = await this.stationRepo.getTickets();
+        const res = await this.stationRepo.getTickets(stationId);
         return mapTicketDTO(res);;
     };
 
     async getStations() {
         const res = await this.stationRepo.getStations();
         return res;
-    }
+    };
+
+    async getStation(pin:number) {
+        const res = await this.stationRepo.getStation(pin);
+        return res;
+    };
 }
 
 

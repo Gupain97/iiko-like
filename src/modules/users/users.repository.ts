@@ -1,5 +1,5 @@
 import { pool } from "../../config/db";
-import { Role } from "./users.types";
+import { Role, User } from "./users.types";
 
 
 // export async function getActiveUsersRepo() {
@@ -13,9 +13,15 @@ export async function getUserRoleRepo(userId: number) {
     return res.rows[0];
 }
 
-export async function getUserForKeyRepo(key: string) {
-    
-    
+export async function getUsersRepo(): Promise<User[]> {
+    const result = await pool.query(`SELECT * FROM users`);
+    return result.rows
 }
 
+
+export async function getUserForPinRepo(pin: number): Promise<User> {
+    
+    const res = await pool.query(`SELECT * FROM users WHERE pin = $1`, [pin]);
+    return res.rows[0];
+}
 

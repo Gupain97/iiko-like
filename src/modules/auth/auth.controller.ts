@@ -6,9 +6,9 @@ import { deleteSession, loginByPin } from './auth.service';
 export const login = async (req: Request, res: Response) => {
   const { pin } = req.body;
 
-  const {user, workSpace, sessionId} = await loginByPin(pin);
+  const {auth , workSpace, sessionId} = await loginByPin(pin);
 
-  if (!user) {
+  if (!auth) {
     return res.status(401).json({
       success: false,
     });
@@ -20,12 +20,7 @@ export const login = async (req: Request, res: Response) => {
   res.json({
     success: true,
     workSpace,
-    user: {
-      id: user.id,
-      role: user.role,
-      name: user.name,
-      surname: user.surname,
-    },
+    user: auth
   });
 };
 

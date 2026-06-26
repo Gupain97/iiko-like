@@ -6,7 +6,7 @@ import { authMiddleware } from '../../middlewares/auth.middleware';
 const router = express.Router();
 
 
-router.post('/:id/items',  asyncHandler(addItemToOrderControllerNew));
+router.post('/:id/items',  authMiddleware, asyncHandler(addItemToOrderControllerNew));
 
 router.post('/:itemId/increment', asyncHandler(addItemQuantityController));
 

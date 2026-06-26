@@ -6,6 +6,17 @@ export interface NewUser {
 
 }
 
+type UserRole = Role; 
+
+
+export interface User {
+    id: number ;
+    role: UserRole;
+    name: string;
+    surname: string;
+}
+
+
 export type Role = ("MANAGER" | "WAITER" | "DIRECTOR" | "STATION");
 
 

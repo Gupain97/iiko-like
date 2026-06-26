@@ -6,4 +6,9 @@ export interface AuthRequest extends Request {
         id: number;
         role: Role;
     };
+
+    station?: {
+        id: number;
+        name: string;
+    }
 }
