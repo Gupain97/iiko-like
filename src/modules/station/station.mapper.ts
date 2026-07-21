@@ -16,7 +16,6 @@ export function mapItemDTO(row: any): StationItemsDTO {
 }
 
 export function mapTicketDTO(rows: TicketRaw[]): StationTicketDTO[] {
-    const items = [];
     const tickets = new Map<number, StationTicketDTO>();
     
     // const ticket = {
@@ -62,7 +61,11 @@ export function mapStationDTO(row: StationsRaw): StationDTO {
         name: row.name,
         soundEnable: row.sound_enable,
         visiableStatuses: row.visiable_statuses
-        
     };
     return res; 
+};
+
+export function mapStationsDTO(rows: StationsRaw[]): StationDTO[] {
+    return rows.map(mapStationDTO);
+    
 }

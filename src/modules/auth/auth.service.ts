@@ -17,18 +17,12 @@ import { mapStationDTO } from "../station/station.mapper";
 
 export const loginByPin = async (pin : string): Promise<{auth: LoginResponse, workSpace: string, sessionId: string}> => {
     const user = await getUserForPinRepo(Number(pin)); // потом сделаем строку
-    const station = await stationService.getStation(Number(pin));
+    const station = await stationService.getStation(Number(pin)); // сделаю проверку, чтобы не идти лишний раз в БД 
     let data = null;
     let stationId = null;
     let entityType = "USER"; // ВРЕМЕННО ЗНАЧЕНИЕ ПО УМОЛЧАНИЮ
     let workSpace = '';
-    
-    // Временно "база данных"
-
-    //const user = userFromDb.find(u => u.pin.toString().trim() === pin.trim());// исправить
-    ///const station = stations.find(u => u.pin.toString().trim() === pin.trim());
-
-    
+  
     if (user) {
         data = user;
         entityType = "USER";
@@ -36,7 +30,7 @@ export const loginByPin = async (pin : string): Promise<{auth: LoginResponse, wo
         await openShift(data.id);
         
     } else if (station) {
-        data = mapStationDTO(station);
+        data = station;
         stationId = station.id;
         workSpace = "KDS";
         entityType = "STATION";
@@ -46,12 +40,10 @@ export const loginByPin = async (pin : string): Promise<{auth: LoginResponse, wo
 
     if (!data ) throw new Error('not data');
     const sessionId = uuidv4();
-     await openSessionRepository(sessionId, entityType, data.id);
-
-    // const { pin: _, ...safeUser } = data;
-    const auth = data;
+    await openSessionRepository(sessionId, entityType, data.id);
+    console.log('auth data', data);
   
-    return { auth , workSpace, sessionId}
+    return {auth : data, workSpace, sessionId}
 };
 
 

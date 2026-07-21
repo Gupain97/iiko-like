@@ -26,7 +26,6 @@ import { stationService } from '../station/station.services';
 // import { wss } from '../../index';
 
 import { webSocketService } from '../../bootstrap';    
-import { getUserForSessionId } from '../auth/auth.service';
 
 
 
@@ -45,7 +44,7 @@ export const ADMIN_ROLES : Role[]= [
     "DIRECTOR"
 ]
 
-export async function createOrGetOrder(tableId: number, userId: number,sessionId:string, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
+export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
 
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
@@ -135,12 +134,11 @@ export async function closeOrderByOrderId(orderId: number, userId: number): Prom
     
     if (!order || order[0].status !== "PRECHECK") {
         throw new Error('ORDER_NOT_FOUND');
-    }
-    const tableId = order[0].table_id;
+    };
     
-    await closeOrderRepo(orderId, userId, tableId );
+    await closeOrderRepo(orderId, userId);
 
-    return mapOrderFullDTO(order);// исправить
+    return mapOrderFullDTO(order);
 }
 
 export async function getOrderById(orderId: number): Promise<OrderFullDTO | null > {

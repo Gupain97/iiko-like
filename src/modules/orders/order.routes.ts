@@ -32,6 +32,6 @@ router.post('/precheck', asyncHandler(prechekOrderController));
 
 router.post('/cancel-precheck', authMiddleware,  requireRole(["MANAGER", "DIRECTOR"]),  asyncHandler(cancelPrecheckOrderController));
 
-router.post('/close', closeOrderByOrderIdController);
+router.post('/close', authMiddleware, closeOrderByOrderIdController);
 
 export default router;

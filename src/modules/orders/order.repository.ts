@@ -174,7 +174,6 @@ export async function getHimOrderByTableRepo(tableId: number, userId: number ) :
 
 
 export async function saveOrderRepo(order: NewOrder) {
-    console.log("order repository", order);
     const result = await pool.query(
         `INSERT INTO orders
         (table_id, status, created_at, prechecked_at, closed_at, created_by, guests_count, table_number)
@@ -219,7 +218,7 @@ export async function precheckOrderRepo(orderId: number) {
 //     const result = await pool.query(`UPDATE orders SET status = `)
 // }
 
-export async function closeOrderRepo(orderId: number, userId: number, tableId: number) {
+export async function closeOrderRepo(orderId: number, userId: number) {
     const row = await pool.query(
         `UPDATE orders SET 
         closed_at = NOW(),
@@ -231,7 +230,7 @@ export async function closeOrderRepo(orderId: number, userId: number, tableId: n
         WHERE id = $2 RETURNING *`, ["CLOSED", orderId, userId]
     );
 
-    await pool.query(`UPDATE tables SET is_open = false, guests_count = null, user_id = null, opened_at = null WHERE id = $1`,[tableId]);
+    // await pool.query(`UPDATE tables SET is_open = false, guests_count = null, user_id = null, opened_at = null WHERE id = $1`,[tableId]);
 
 }
 

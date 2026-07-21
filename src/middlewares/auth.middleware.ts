@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { Role } from "../modules/users/users.types";
 import { AuthRequest } from "../modules/auth/auth.types/auth-request";
 import { getSession, getStationForSessionId, getUserForSessionId } from "../modules/auth/auth.service";
@@ -8,6 +8,7 @@ export const authMiddleware = async (
     res: Response,
     next: NextFunction
 ) => {
+    console.log('authMiddleware');
     const sessIonId = req.cookies.sessionId;
     const session = await getSession(sessIonId);
     if (session.entityType === "STATION") {
@@ -28,6 +29,7 @@ export const authMiddleware = async (
         const user = await getUserForSessionId(sessIonId);
         const userId = user.id;
         const userRole = user.role;
+        console.log('user:', user);
         if (!userId || !userRole) {
             return res.status(401).json({message: 'Not authenticated'}); 
     

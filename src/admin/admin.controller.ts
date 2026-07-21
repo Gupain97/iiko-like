@@ -4,7 +4,6 @@ import { getAllItems, getAllCategories, addCategory, addMenuItem, getAllUsers, a
 
 export const getPossiblyfunctionsController = async (req: Request, res: Response) => {
     const result = await getAllItems();
-    console.log('мы зашли в контроллер админа', result);
     res.json(result);
     
 }
@@ -21,7 +20,6 @@ export const getAllCategoriesController = async (req: Request, res: Response) =>
 
 export const addCategoryController = async (req: Request, res: Response) => {
     const name = req.body.name;
-    console.log('nameRepo', name);
     const result = await  addCategory(name); 
 }
 
@@ -32,7 +30,7 @@ export const addMenuItemController = async (req: Request, res: Response) => {
 
 export const getAllUsersController = async (req: Request, res: Response) => {
     const result = await getAllUsers();
-    console.log('getUsersController',result);
+
     res.json(result);
 }
 

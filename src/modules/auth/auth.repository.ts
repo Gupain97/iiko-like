@@ -14,7 +14,6 @@ export async function openSessionRepository(sessionId: string, entityType: strin
 
 
 export async function getUserForSessionIdRepo(sessionId: string ) : Promise<UserRaw> {
-    console.log('sessionId:', sessionId);
     const res = await pool.query(`
         SELECT
         
@@ -27,7 +26,6 @@ export async function getUserForSessionIdRepo(sessionId: string ) : Promise<User
         LEFT JOIN users u ON s.entity_id = u.id
         WHERE s.session_id = $1`, [sessionId]);
     
-    console.log("userForSessionRepo:",res.rows[0]);
     return res.rows[0];
 }
 
@@ -41,7 +39,6 @@ export async function getStationRepo(sessionId: string): Promise<Station> {
         LEFT JOIN station st ON s.entity_id = st.id
         WHERE session_id = $1
         `, [sessionId]);
-        console.log("sess", res.rows);
     return res.rows[0];
 };
 

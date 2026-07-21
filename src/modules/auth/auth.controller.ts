@@ -13,7 +13,7 @@ export const login = async (req: Request, res: Response) => {
       success: false,
     });
   }
-  console.log(sessionId, "sessId in CONTROLLER");
+
 
   res.cookie("sessionId", sessionId);
 
@@ -40,7 +40,6 @@ export const deleteSessionController = async (req: Request, res: Response) => {
 
 //     try {
 //         const user = await loginByPin(pin);
-//         console.log( user , 'controller')
         
 //         return res.status(200).json({message: 'Авторизация успешна!', user});
 //     } catch (error) {

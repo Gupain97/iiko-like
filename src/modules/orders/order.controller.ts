@@ -10,26 +10,23 @@ import {
 
     
 } from './order.services'
+import { AuthRequest } from "../auth/auth.types/auth-request";
 
 
 
 export const getOrdersController = async (req: Request, res: Response) => {
     const waiterId = Number(req.params.id); 
-    const cook = req.cookies;
-    console.log('coockie in backend:', cook);
     const orders = await getWaiterOrders(waiterId);
     res.json(orders);
 };
 
 export const createOrGetOrderController = async (req: Request, res: Response) => {
-        const sessionId = req.cookies.sessionId;
-
         const tableId = Number(req.body.tableId);
         const userId = Number(req.body.waiterId);
         const guestsCount = Number(req.body.guestsCount);
         const tableNumber = Number(req.body.tableNumber);
 
-        const order = await createOrGetOrder(tableId, userId, sessionId, guestsCount, tableNumber);
+        const order = await createOrGetOrder(tableId, userId, guestsCount, tableNumber);
  
         res.json(order);
     
@@ -64,9 +61,10 @@ export const cancelPrecheckOrderController = async (req: Request, res: Response)
 
 
 
-export const closeOrderByOrderIdController = async (req:Request, res:Response) => {
+export const closeOrderByOrderIdController = async (req:AuthRequest, res:Response) => {
     const oId = Number(req.body.orderId);
-    const userId = Number(req.body.userId);
+    if (!req.user) throw new Error('Пользователь не найден');
+    const userId = req.user.id;
     const result = await closeOrderByOrderId(oId, userId);
     res.json(result);
 
