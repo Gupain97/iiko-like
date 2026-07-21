@@ -14,7 +14,7 @@ import { findOrderByOrderIdRepo,
          updateStatusOrderRepo,
          getHimOrderByTableRepo,
         } from './order.repository';
-import { findTableByTableIdRepo } from '../tables/tables.repository'
+//import { findTableByTableIdRepo } from '../tables/tables.repository'
 ;
 import { AppError } from '../../errors/AppErrors';
 import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
@@ -22,6 +22,12 @@ import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../users/users.repository';
 import { Role } from '../users/users.types';
 import { stationService } from '../station/station.services';
+// import { WebSocketService } from '../../websocet/firstSocet';
+// import { wss } from '../../index';
+
+import { webSocketService } from '../../bootstrap';    
+
+
 
 
  
@@ -44,19 +50,18 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
     const userRole = await getUserRoleRepo(userId);
+   // const user = await getUserForSessionId(sessionId);
     
         
     if (order && ACTIVE_STATUSES.includes(order.status)) {
         return mapOrderFullDTO(existingOrder);
     } else if (userRole && ADMIN_ROLES.includes(userRole)) {
         const order = await getHimOrderByTableRepo(tableId, userId);
-        console.log("userRole:", userRole, ADMIN_ROLES);
+      //  console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
-      
-    const existingTable = await findTableByTableIdRepo(tableId);
-    if (!existingTable?.isOpen) {
-        if(!guestsCount){
+    if (existingOrder.length < 1 ) {
+        if (!guestsCount) {
             throw new AppError('GUEST_COUNT_REQUIRED!', 400);
         }
     }
@@ -86,17 +91,12 @@ export async function printOrder(orderId : number) : Promise<OrderFullDTO | null
     if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
 
     const markItems = await markItemsPrintedRepo(orderId);
-    // console.log('upOrder in orderService', markItems);
-    //const res = mapOrderWithItems(updateOrder);
     const ticketId = await stationService.addOrder(orderId);
     await stationService.addItem(markItems, ticketId);
-    await stationService.getTickets();
+    webSocketService.sendMessage('message');
     
-    //if (!res) throw new Error('break update order');
     const res = await findOrderByOrderIdRepo(orderId);
     
-    
-
     return mapOrderFullDTO(res);
     
    
@@ -134,12 +134,11 @@ export async function closeOrderByOrderId(orderId: number, userId: number): Prom
     
     if (!order || order[0].status !== "PRECHECK") {
         throw new Error('ORDER_NOT_FOUND');
-    }
-    const tableId = order[0].table_id;
+    };
     
-    await closeOrderRepo(orderId, userId, tableId );
+    await closeOrderRepo(orderId, userId);
 
-    return mapOrderFullDTO(order);// исправить
+    return mapOrderFullDTO(order);
 }
 
 export async function getOrderById(orderId: number): Promise<OrderFullDTO | null > {

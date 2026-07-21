@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS station_category;
+
+DROP TABLE IF EXISTS table;
+
+DROP TABLE IF EXISTS tables;

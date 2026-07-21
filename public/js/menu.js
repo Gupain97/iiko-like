@@ -43,6 +43,7 @@ async function closeShiftUser() {
   const data = await res.json();
   if (data != "Смена закрыта!")  { alert ("Незакрытых столов на сумму " + data + " рублей")
   } else {
-    alert(data)};
+    alert(data)
+    window.location.href = '/'};
 
 }     

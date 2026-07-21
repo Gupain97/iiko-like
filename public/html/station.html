@@ -8,11 +8,51 @@
 </head>
 <body>
     <div id="header-container"></div>
-    <table>
-        <tbody id="dishList"></tbody>
+    <div class="ticket-container">
+        <div id="dishList"></div>
+    </div>
 
-    </table>
+    <button id="configuration">
+        <img src="/icons/free-icon-wrench-and-bolt-tool-with-hammer-28491.png" alt="Конфигурации" width="50" height="50">
+    </button>
 
+    <div id="modalOverlay" class="hidden">
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <h2>Конфигурация станции</h2>
+                
+                <button id="closeModal">✕</button>
+                
+            </div>
+            
+            <div class="modal-body">
+                <div class="settings-group">
+
+                    <label>
+                        <input type="checkbox" class="status-filter" data-status="NEW">
+                        Новые заказы
+                    </label>
+                    <label>
+                        <input type="checkbox" class="status-filter" data-status="READY">
+                        Приготовлено
+                    </label>
+    
+                    <label>
+                        <input type="checkbox" class="status-filter" data-status="GIVEN">
+                        Отдано
+                    </label>
+                </div>
+
+                <!-- Здесь потом будут категории -->
+
+            </div>
+
+        </div>
+
+    </div>
 
     <script src="/js/header.js" defer></script>
     <script src="/js/station.js" defer></script>

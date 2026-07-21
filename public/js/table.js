@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ===== helpers =====
   const params = new URLSearchParams(window.location.search);
   const tableId = Number(params.get('id'));
-  const user = JSON.parse(localStorage.getItem('user'));
+  //const user = JSON.parse(localStorage.getItem('user'));
 
-  if (!user) {
-    window.location.href = '/';
-    return;
-  }
+  // if (!user) {
+  //   window.location.href = '/';
+  //   return;
+  // }
 
   let allItems = [];
   let currentOrder = null;
@@ -101,7 +101,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const waiterId = urlParams.get('waiterId');
       let res = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-user-id': user.id, 'x-user-role': user.role },
+        headers: { 'Content-Type': 'application/json'},
+        credentials: 'include',
         body: JSON.stringify({ tableId , waiterId: waiterId})
       });
       
@@ -119,12 +120,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           res = await fetch('/api/orders', {
             method: 'POST',
             headers: { 
-              'Content-Type': 'application/json', 
-              'x-user-id': user.id, 
-              'x-user-role': user.role  },
+              'Content-Type': 'application/json'},
+            credentials: 'include',
             body: JSON.stringify({ 
-              tableId , 
-              userId: user.id, 
+              tableId,  
               waiterId,
               guestsCount, tableNumber ,
             })
@@ -243,10 +242,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch('/api/orders/print', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
            orderId: currentOrder.id,
-           tableId,
-            userId: user.id })
+           tableId})
         
           });
         
@@ -267,10 +266,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch('/api/orders/precheck',{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
            orderId: currentOrder.id,
-           tableId,
-            userId: user.id })
+           tableId})
         
       });
 
@@ -287,7 +286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const res = await fetch('/api/orders/cancel-precheck', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json', "x-user-id": user.id , "x-user-role": user.role},
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
         body: JSON.stringify({orderId: currentOrder.id})
       });
       const data = await res.json();
@@ -315,10 +315,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       await fetch('/api/orders/close', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
            orderId: currentOrder.id,
            tableId,
-            userId: user.id })
+          })
       });
  
       currentOrder.isOpen = false;

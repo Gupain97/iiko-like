@@ -4,3 +4,297 @@ body {
   background-color: #f5f5f5;
   color: #222;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #1f2937;
+    font-family: Arial, sans-serif;
+    color: white;
+    padding: 20px;
+}
+
+.orders-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    background: #ffffff;
+    color: #111827;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+
+.order-header {
+    background: #111827;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 24px;
+}
+
+.label {
+    font-size: 12px;
+    opacity: .7;
+    text-transform: uppercase;
+}
+
+.value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.order-items {
+    padding: 10px 0;
+}
+
+.dish-item {
+    padding: 18px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dish-item:last-child {
+    border-bottom: none;
+}
+
+.dish-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dish-name {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.dish-qty {
+    font-size: 32px;
+    font-weight: bold;
+    color: #dc2626;
+}
+
+.dish-comment {
+    margin-top: 10px;
+    padding: 10px;
+    background: #fef3c7;
+    border-left: 5px solid #f59e0b;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.empty-state {
+    text-align: center;
+    font-size: 32px;
+    color: white;
+    margin-top: 100px;
+}
+
+
+
+/* обработчик */ 
+.dish-menu {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    z-index: 1000;
+}
+
+.dish-menu button {
+    display: block;
+    width: 180px;
+    padding: 12px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    font-size: 15px;
+}
+
+.dish-menu button:hover {
+    background: #f5f5f5;
+}
+
+.dish-item.selected {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+
+.dish-item {
+    cursor: pointer;
+    transition: .2s;
+}
+
+.dish-item:hover {
+    background: rgba(255,255,255,.05);
+}
+
+.dish-item.selected {
+    background: rgba(255,193,7,.15);
+    border-left: 4px solid #ffc107;
+    padding-left: 10px;
+}
+
+.dish-menu {
+    position: absolute;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.2);
+    overflow: hidden;
+    z-index: 10000;
+}
+
+.dish-menu button {
+    width: 180px;
+    padding: 12px 16px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+}
+
+.dish-menu button:hover {
+    background: #f5f5f5;
+}
+
+/* статусы заказов */
+.dish-ready {
+    border-left: 4px solid #4CAF50;
+    background: #58fe55;
+}
+
+.dish-cooking {
+    border-left: 4px solid #FF9800;
+    background: #51c0dc;
+}
+
+.dish-waiting {
+    border-left: 4px solid #2196F3;
+    background: #deeb54;
+}
+
+.dish-given {
+    border-left: 4px solid #f44c9d;
+    background: #797979;
+    opacity: 0.7;
+}
+
+#configuration {
+    position: fixed;
+    background-color: #1f2937;
+    right: 20px;
+    bottom: 20px;
+    border: none;
+    cursor: pointer;
+    padding: 0px 0px 18px 18px;
+}
+
+/* Модалка конфигураций */ 
+.hidden {
+    display: none !important;
+}
+
+#modalOverlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+.modal {
+
+    width: 700px;
+    max-width: 90%;
+
+    background: white;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+.modal-header {
+    color: #111827;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 20px;
+
+    border-bottom: 1px solid #ddd;
+
+}
+
+.modal-body {
+    color: #111827;
+
+    padding: 20px;
+
+    min-height: 300px;
+
+}
+
+#closeModal {
+
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    font-size: 24px;
+
+}
+
+
+/* Группа настроек */
+.settings-group {
+    display: flex;
+    flex-direction: column;  /* ← столбик */
+    gap: 12px;              /* расстояние между пунктами */
+}
+
+/* Каждая строка с чекбоксом */
+.settings-group label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+
+/* Сам чекбокс - увеличиваем размер */
+.settings-group input[type="checkbox"] {
+    width: 24px;      /* ширина */
+    height: 24px;     /* высота */
+    cursor: pointer;
+    flex-shrink: 0;   /* чтобы не сжимался */
+}
+
+/* Дополнительно: увеличиваем область клика */
+.settings-group label {
+    min-height: 48px; /* чтобы было удобнее кликать */
+}

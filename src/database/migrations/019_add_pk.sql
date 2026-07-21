@@ -1,0 +1,2 @@
+ALTER TABLE station_categories
+ADD COLUMN id SERIAL PRIMARY KEY

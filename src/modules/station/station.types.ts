@@ -2,7 +2,27 @@ export type StationItemsStatus = ('NEW' | 'READY' | 'GIVEN');
 export type StationTicketStatus = ('NEW'| 'READY');
 
 
-export interface StationRow {
+export interface Station {
+    id: number;
+    name: string;
+}
+
+export interface StationsRaw {
+    id: number;
+    name: string;
+    sound_enable: boolean;
+    visiable_statuses : string[];
+};
+
+export interface StationDTO {
+    id: number;
+    name: string;
+    soundEnable: boolean;
+    visiableStatuses: string[];
+};
+
+
+export interface TicketRaw {
     id: number;
     ticket_status: StationTicketStatus;
     item_id: number;

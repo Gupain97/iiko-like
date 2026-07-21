@@ -1,29 +1,34 @@
 import { Request, Response } from 'express';
-import { loginByPin } from '../services/auth.service';
+import { deleteSession, loginByPin } from './auth.service';
 
 
 
 export const login = async (req: Request, res: Response) => {
   const { pin } = req.body;
 
-  const user = await loginByPin(pin);
+  const {auth , workSpace, sessionId} = await loginByPin(pin);
 
-  if (!user) {
+  if (!auth) {
     return res.status(401).json({
       success: false,
     });
   }
 
+
+  res.cookie("sessionId", sessionId);
+
   res.json({
     success: true,
-    user: {
-      id: user.id,
-      role: user.role,
-      name: user.name,
-      surname: user.surname,
-    },
+    workSpace,
+    user: auth
   });
 };
+
+export const deleteSessionController = async (req: Request, res: Response) => {
+  const key = req.cookies.sessionId;
+  const result = await deleteSession(key);
+  res.json(result);
+}
 
 
 // export const login = async (req: Request, res: Response) => {
@@ -35,7 +40,6 @@ export const login = async (req: Request, res: Response) => {
 
 //     try {
 //         const user = await loginByPin(pin);
-//         console.log( user , 'controller')
         
 //         return res.status(200).json({message: 'Авторизация успешна!', user});
 //     } catch (error) {

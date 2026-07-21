@@ -10,6 +10,7 @@ import {
 
     
 } from './order.services'
+import { AuthRequest } from "../auth/auth.types/auth-request";
 
 
 
@@ -20,7 +21,6 @@ export const getOrdersController = async (req: Request, res: Response) => {
 };
 
 export const createOrGetOrderController = async (req: Request, res: Response) => {
-
         const tableId = Number(req.body.tableId);
         const userId = Number(req.body.waiterId);
         const guestsCount = Number(req.body.guestsCount);
@@ -61,9 +61,10 @@ export const cancelPrecheckOrderController = async (req: Request, res: Response)
 
 
 
-export const closeOrderByOrderIdController = async (req:Request, res:Response) => {
+export const closeOrderByOrderIdController = async (req:AuthRequest, res:Response) => {
     const oId = Number(req.body.orderId);
-    const userId = Number(req.body.userId);
+    if (!req.user) throw new Error('Пользователь не найден');
+    const userId = req.user.id;
     const result = await closeOrderByOrderId(oId, userId);
     res.json(result);
 

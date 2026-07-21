@@ -47,9 +47,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   
   logoutBtn.addEventListener('click', () => {
-        localStorage.removeItem('user');
-        window.location.href = '/';
+        logout();
   });
+
+
+  async function logout() {
+    try {
+        localStorage.removeItem('user');
+        const res = await fetch('/api/auth/delete', {
+          method: 'DELETE',
+          headers: {'Content-Type' : 'application/json'},
+          credentials: 'include',
+        })
+        console.log(res);
+        window.location.href = '/';
+    } catch (err) {
+      console.error("Ошибка Логаута", err);
+    }
+  }
 
 }catch (err) {
     console.error("Ошибка загрузки хедера", err);

@@ -1,5 +1,5 @@
 import express from 'express'; 
-import authRouter from './routes/auth'; 
+import authRouter from './modules/auth/auth.routes'; 
 import path from 'path';
 // import tablesRouter from './modules/tables/tables.routes';
 import ordersRoutes from './modules/orders/order.routes';
@@ -12,11 +12,18 @@ import stopListRoutes from './modules/stop-list/stop-list.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
 import  stationRoutes  from './modules/station/station.routes';
+import cors from "cors"
+import cookieParser from 'cookie-parser';
 
 
 
 
 export const app = express();
+app.use(cors({
+    origin: "http://localhost:8080",
+    credentials: true
+}));
+app.use(cookieParser());
 
 app.use(express.json());
 
@@ -50,7 +57,6 @@ app.use('/api/station', stationRoutes);
 
 
 
-
 app.get('/main', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/html/main.html'));
 });
@@ -66,7 +72,6 @@ app.get('/station', (req, res) => {
 pool.query("SELECT NOW()")
   .then(res => console.log("DB connected:", res.rows[0]))
   .catch(err => console.error("DB error:", err));
-
 
 
 app.use(errorHandler);

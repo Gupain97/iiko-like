@@ -10,7 +10,6 @@ export const addDishToStopController = async ( req:Request, res: Response ) => {
 }
 
 export const addRemainderController = async (req: Request, res: Response) => {
-    console.log("body:", req.body)
     const {dishId, count} = req.body;
     const result = await addRemainder(dishId, count) ;
     res.json(result);

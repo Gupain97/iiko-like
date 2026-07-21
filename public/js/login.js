@@ -41,7 +41,8 @@ function submitPin() {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ pin })
+    body: JSON.stringify({ pin }),
+    credentials: 'include'
   })
   .then(res => res.json())
   .then(data => {
@@ -54,7 +55,17 @@ function submitPin() {
     }
 
     localStorage.setItem('user', JSON.stringify(data.user));
-    window.location.href = '/main';
+    console.log(data);
+    switch (data.workSpace) {
+      case "POS":
+        window.location.href = '/main';
+        break;
+      case "KDS":
+        window.location.href = '/station';
+        break
+      default:
+        break;
+    }
   });
 }
 

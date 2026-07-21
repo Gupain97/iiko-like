@@ -49,3 +49,4 @@ export async function addUser(name:string, surname: string, role: string, pin: n
     }
     await addUserRepo(user);
 }
+

@@ -1,4 +1,4 @@
-import { StationItemsDTO, StationRow, StationTicketDTO } from "./station.types";
+import { StationDTO, StationItemsDTO, TicketRaw, StationTicketDTO, StationsRaw } from "./station.types";
 
 
 export function mapItemDTO(row: any): StationItemsDTO {
@@ -15,8 +15,7 @@ export function mapItemDTO(row: any): StationItemsDTO {
 
 }
 
-export function mapTicketDTO(rows: StationRow[]): StationTicketDTO[] {
-    const items = [];
+export function mapTicketDTO(rows: TicketRaw[]): StationTicketDTO[] {
     const tickets = new Map<number, StationTicketDTO>();
     
     // const ticket = {
@@ -51,6 +50,22 @@ export function mapTicketDTO(rows: StationRow[]): StationTicketDTO[] {
         categoryId: row.category_id
     });
     
-}
-return Array.from(tickets.values());
+    }
+    return Array.from(tickets.values());
+};
+
+
+export function mapStationDTO(row: StationsRaw): StationDTO {
+    const res : StationDTO = {
+        id: row.id,
+        name: row.name,
+        soundEnable: row.sound_enable,
+        visiableStatuses: row.visiable_statuses
+    };
+    return res; 
+};
+
+export function mapStationsDTO(rows: StationsRaw[]): StationDTO[] {
+    return rows.map(mapStationDTO);
+    
 }
