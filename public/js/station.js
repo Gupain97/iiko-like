@@ -49,9 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         checkbox.addEventListener('change', async () => {
             const status = checkbox.dataset.status;
             const enabled = checkbox.checked
-            // console.log(enabled);
-            // console.log(status);
-            
+ 
             await changeStatusFilter(status, enabled);
         })
     })

@@ -143,8 +143,7 @@ export async function getPrintedCashForWaiterRepo(userId: number) {
 
     return res.rows[0].sum;
 
-}
-
+};
 
 
 

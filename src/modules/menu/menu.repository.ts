@@ -41,6 +41,11 @@ export async function findItemByIdRepo(itemId: number): Promise<MenuItemRow | nu
     return res.rows[0];
 }
 
+export async function getDishBySearchRepo(query: string): Promise<MenuItemRow[]>{
+    const res = await pool.query(`SELECT * FROM menu_items WHERE name ILIKE $1`, [`%${query}%`]);
+    return res.rows;
+}
+
 
 // export async function getCurrentStopListRepo() {
 //     const res = await pool.query(`SELECT * FROM menu_items WHERE is_active = false`)

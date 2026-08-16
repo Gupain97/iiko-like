@@ -1,6 +1,6 @@
 import { OrderItem } from "../orders/order.types";
 import { StopListDto } from "./menu.dto";
-import { MenuItem , AllMenuRow, AllMenuDTO} from "./menu.types";
+import { MenuItem , AllMenuRow, AllMenuDTO, MenuItemRow} from "./menu.types";
 
 
 
@@ -24,6 +24,16 @@ export function mapMenuDTO(rows: AllMenuRow[]) : AllMenuDTO[] {
         remainder: row.remainder,
         isStopped: row.is_stopped
     }) satisfies AllMenuDTO );
+}
+
+export function mapMenuItems(rows: MenuItemRow[]): MenuItem[] {
+    return rows.map( row => ({
+        id: row.id,
+        name: row.name,
+        price: row.price / 100,
+        isActive: row.is_active,
+        categoryId: row.category_id
+    }) satisfies MenuItem );
 }
 
 // export function mapStopListItemsToService(row: any) : StopListDto[] {

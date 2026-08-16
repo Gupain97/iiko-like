@@ -9,6 +9,7 @@ import shiftsRoutes from './modules/shifts/shifts.routes';
 import deliveryRoutes from './modules/delivery/delivery.routes';
 import orderItemsRoutes from './modules/order-items/orderItems.routes';
 import stopListRoutes from './modules/stop-list/stop-list.routes';
+import callCenterRoutes from './intergrations/call-center/call-center.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { pool } from './config/db';
 import  stationRoutes  from './modules/station/station.routes';
@@ -50,6 +51,8 @@ app.use('/api/order-items', orderItemsRoutes);
 app.use('/api/stop-list', stopListRoutes);
 
 app.use('/api/station', stationRoutes);
+
+app.use('/api/call-center', callCenterRoutes);
 
 
 

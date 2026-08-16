@@ -178,7 +178,7 @@ export async function saveOrderRepo(order: NewOrder) {
         `INSERT INTO orders
         (table_id, status, created_at, prechecked_at, closed_at, created_by, guests_count, table_number)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING *`,
+        RETURNING id, *`,
         [
             order.tableId,
             order.status,
