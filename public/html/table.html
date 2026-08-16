@@ -53,13 +53,32 @@
       <button id="exitTableBtn" class="btn-exit">Назад</button>
     </div>
 
+    
   </div>
-
+  
   <div class="menu-container">
     <div id="categories"></div>
     <div id="menuItems"></div>
+    <!-- Блок поиска -->
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input 
+                type="text" 
+                id="dishSearchInput" 
+                class="search-input" 
+                placeholder="🔍 Поиск блюд"
+                autocomplete="off"
+            >
+            <button id="searchButton" class="search-btn">Найти</button>
+        </div>
+        
+        <!-- Результаты поиска -->
+        <div id="searchResult" class="search-results">
+            <!-- Сюда будут подгружаться результаты -->
+        </div>
+    </div>
   </div>
-
+  
     <script src="/js/header.js"></script>
     <script src="/js/table.js"></script>
 </div>

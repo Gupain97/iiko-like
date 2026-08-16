@@ -55,12 +55,12 @@ export class StationService {
     }
 
 
-    async changeStatusFilter(stationId: number, enabled: boolean, status: StationItemsStatus) {
+    async changeStatusFilter(stationId: number, enabled: boolean, status: StationItemsStatus): Promise<StationItemsStatus[] | null> {
         const statuses = await this.stationRepo.getStatusFilter(stationId);
         if ( statuses.includes(status)) {
             console.log('status in statuses');
             if (enabled) {
-                return 
+                return null
             } else {
                 const updateStatuses = statuses.filter((stat:string)  => stat !== status);
                 const res = await this.stationRepo.changeStatusFilter(stationId, updateStatuses);
@@ -77,6 +77,7 @@ export class StationService {
                 console.log(res);
                 return res;
             }
+            return null
         }
 
         

@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const menuItemsEl = document.getElementById("menuItems");
   const waiterNameEl = document.getElementById('waiterName');
 
+  const searchInput = document.getElementById('dishSearchInput');
+  const searchButton = document.getElementById('searchButton');
+  const searchResult = document.getElementById('searchResult');
+
   // document.getElementById('userName').textContent =
   //   `${user.name} ${user.surname}`;
 
@@ -90,6 +94,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   exitTableBtn.addEventListener('click', () => {
     window.location.href = '/main';
+  });
+
+  searchResult.addEventListener('click', async function(e) {
+    const button = e.target.closest('.search-results');
+    if (button) {
+      const dishId = parseInt(button.dataset.dishId);
+      if(dishId){
+        await addItemToOrder(dishId);
+      }
+    }
   });
   
 
@@ -348,6 +362,61 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 }
 
+
+  async function searchDish(query) { // Поиск работает , нужно добавить вид блюд что в стопе 
+    if (!query.trim()) {
+      searchResult.innerHTML = '';
+      return;
+
+    }
+    try {
+      const res = await fetch(`/api/menu/search-dish`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({query})
+      });
+
+
+      if (!res.ok) {
+        console.error('Ошибка при поиске блюда');
+      }
+
+      const dishes = await res.json();
+      renderResult(dishes);
+    } catch (err) {
+      console.error('Ошибка поиска', err);
+    }
+  }
+
+  function renderResult(dishes) {
+
+    if (!dishes || dishes.length === 0) {
+      searchResult.innerHTML = ''
+      return
+    }
+    searchResult.innerHTML = dishes.map(dish => `
+      <div class="dish-card">
+        <h4>${dish.name}</h4>
+        <div class="price">${dish.price} ₽</div>
+        <button 
+          class="search-results"
+          data-dish-id = "${dish.id}"
+        >
+        Добавить в заказ
+        </button>
+      </div>
+      `).join('');
+  }
+
+  let searchTimeout;
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        searchDish(e.target.value);
+    }, 500); // Ждем 500ms после окончания ввода
+  });
+
   async function renderOrder() {
     await renderOrderItems();
     await renderTotal();
@@ -487,7 +556,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function renderMenuItems(categoryId) {
     menuItemsEl.innerHTML = "";
-    console.log(categoryId);
     selectCategoryId = categoryId;
 
     const items = allItems.filter(i => i.categoryId === categoryId);

@@ -1,5 +1,5 @@
 //import { orders } from './order.storage'
-import { NewOrder, Order } from './order.types'
+import { NewOrder, Order, OrderItem } from './order.types'
 import {  mapOrderToDTO, mapOrderFullDTO, mapOrderWithItems, mapOrderSlotDTO } from './order.mapper';
 import { OrderDTO, OrderFullDTO, OrderSlotsDTO} from './order.dto';
 import { OrderStatus } from '../../domain/orderStatus';
@@ -44,6 +44,25 @@ export const ADMIN_ROLES : Role[]= [
     "DIRECTOR"
 ]
 
+
+export async function createOrder(tableId: number, userId: number, items:OrderItem[], guestsCount?: number, tableNumber?: number) {
+        const newOrder: NewOrder = {
+        userId,
+        tableNumber,
+        guestsCount,
+        status: "OPEN",
+        tableId,
+        createdAt: new Date(),
+        precheckAt: null,
+        closedAt: null,
+        items
+    };
+
+    const order = await saveOrderRepo(newOrder);
+    return order 
+    
+}
+
 export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
 
 
@@ -67,8 +86,8 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
     }
     const newOrder: NewOrder = {
         userId,
-        tableNumber:  tableNumber,
-        guestsCount: guestsCount, 
+        tableNumber,
+        guestsCount,
         status: "OPEN",
         tableId,
         createdAt: new Date(),
