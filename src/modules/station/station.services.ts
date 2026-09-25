@@ -34,7 +34,6 @@ export class StationService {
 
     async getStation(pin:number): Promise<StationDTO| null>  {
         const res = await this.stationRepo.getStation(pin);
-        console.log("res:", res);
         
         if (!res) return null;
         return mapStationDTO(res);
@@ -50,7 +49,6 @@ export class StationService {
 
     async getStatusFilter(stationId: number) : Promise<StationItemsStatus[]> {
         const res = await this.stationRepo.getStatusFilter(stationId);
-        console.log('statusFilter in service:', res);
         return res;
     }
 
@@ -58,7 +56,6 @@ export class StationService {
     async changeStatusFilter(stationId: number, enabled: boolean, status: StationItemsStatus): Promise<StationItemsStatus[] | null> {
         const statuses = await this.stationRepo.getStatusFilter(stationId);
         if ( statuses.includes(status)) {
-            console.log('status in statuses');
             if (enabled) {
                 return null
             } else {
@@ -69,12 +66,10 @@ export class StationService {
             }
         } else {
             if (!enabled) {
-                console.log('статуса не было и не добавили');
             } else {
                 const updateStatuses = [...statuses];
                 updateStatuses.push(status);
                 const res = await this.stationRepo.changeStatusFilter(stationId, updateStatuses);
-                console.log(res);
                 return res;
             }
             return null

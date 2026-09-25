@@ -1,8 +1,10 @@
 import { OrderStatus } from "../../domain/orderStatus";
+import { Sources } from "../../domain/sources";
 
 export interface OrderRow {
     id: number;
     user_id: number,
+    source: Sources,
     status: OrderStatus;
     guests_count: number;
     table_id: number;

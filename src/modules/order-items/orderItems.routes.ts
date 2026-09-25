@@ -11,7 +11,7 @@ router.post('/:id/items',  authMiddleware, asyncHandler(addItemToOrderController
 router.post('/:itemId/increment', asyncHandler(addItemQuantityController));
 
 router.post('/:itemId/decrement', asyncHandler(decrementItemQantityController));
-router.delete('/:itemId/delete', asyncHandler(deleteItemController));
+router.delete('/:itemId/delete', authMiddleware, asyncHandler(deleteItemController));
 
 
 export default router;

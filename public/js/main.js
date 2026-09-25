@@ -5,10 +5,10 @@ let currentSelectWaiter = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Локальные переменные доступны во всех функциях внутри
-  const logoutBtn = document.getElementById('logoutBtn');
-  const closeShiftBtn = document.getElementById('closeShiftBtn');
-  const staffList = document.querySelector('.staff-list');
-  const deliveryBtn = document.querySelector('.deliveryBtn');
+  // const logoutBtn = document.getElementById('logoutBtn');
+  // const closeShiftBtn = document.getElementById('closeShiftBtn');
+  // const staffList = document.querySelector('.staff-list');
+  // const deliveryBtn = document.querySelector('.deliveryBtn');
   
   // Проверка авторизации - первым делом
    const userRaw = localStorage.getItem('user');

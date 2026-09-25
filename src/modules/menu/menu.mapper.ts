@@ -35,17 +35,3 @@ export function mapMenuItems(rows: MenuItemRow[]): MenuItem[] {
         categoryId: row.category_id
     }) satisfies MenuItem );
 }
-
-// export function mapStopListItemsToService(row: any) : StopListDto[] {
-//     const stopList = [];
-    
-//     for (const rows of row ) {
-//         stopList.push({
-//             id: rows.id,
-//             name: rows.name,
-//             categoryId: rows.category_id
-
-//         })
-//     }
-//     return  stopList
-// }

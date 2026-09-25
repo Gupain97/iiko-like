@@ -1,17 +1,19 @@
-import { DeliveryOrder } from "../../modules/delivery/delivery.types";
+import { CallCenterOrder, DeliveryOrder } from "../../modules/delivery/delivery.types";
 import { OrderItem } from "../../modules/orders/order.types";
 
 
 
-export function mapCallCenterToDelivery(center: any) : DeliveryOrder {
+export function mapCallCenterToDelivery(center: any) : CallCenterOrder {
     const items = center.items ?? [];
     
-    const res : DeliveryOrder = {
-        service: "Call-Center",
-        id: center.id,
+    const res : CallCenterOrder = {
+        service: "CALL-CENTER",
+        crmOrderId: center.id,
+        operatorId: center.operator_id,
         customerName: center.customer_name,
         address: center.address,
         phoneNumber: center.phone_number,
+        guestsCount: center.guests_count,
         comments: center.comments,
         items: items , //items.map(mapCallCenterItems),
         createdAt: center.created_at

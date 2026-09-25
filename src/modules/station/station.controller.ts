@@ -15,7 +15,6 @@ export const getTicketsController = async (req: AuthRequest, res: Response) => {
 }
 
 export const updateDishStatusController = async (req: Request, res: Response) => {
-   console.log('status controller:', req.body);
    const {status, dishId} = req.body;
    await service.updateStatus(dishId, status);
    res.json('ok');

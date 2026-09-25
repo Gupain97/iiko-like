@@ -1,39 +1,61 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>iiko-like</title>
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/header.css">    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Delivery</title>
+
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/delivery.css">
 </head>
+
 <body>
 
+  <div id="header-container"></div>
 
-<div id="header-container"></div>
+  <div class="app">
 
-  <div class="layout">
+    <aside class="orders">
+      <h1>Delivery</h1>
 
-    <aside class="sidebar">
-        <div class="weather-list"></div>
+      <div class="weather-list"></div>
 
-
- 
- 
- 
+      <div id="ordersList"></div>
     </aside>
 
-    <main class="content">
-        <div class="delivery-list"></div>
+
+    <main class="details">
+
+      <div id="details">
+        <div class="empty">
+          Выберите заказ
+        </div>
+      </div>
 
     </main>
+    <div class="filters">
+  <label>
+    <input type="checkbox" class="status-filter" value="NEW" checked>
+    Новые
+  </label>
+  <label>
+    <input type="checkbox" class="status-filter" value="SENT" checked>
+    Отправленные
+  </label>
+  <label>
+    <input type="checkbox" class="status-filter" value="COMPLETE" checked>
+    Завершённые
+  </label>
+</div>
+
+<div id="orders-list"></div>
+<div id="details"></div>
 
   </div>
 
-  <button id="createTableBtn">Создать стол</button>
-  <script src="/js/header.js" defer></script>
-  <script src="/js/delivery.js" defer></script>
+  <script src="/js/delivery.js"></script>
+  <script src="/js/header.js"></script>
 
 </body>
 </html>

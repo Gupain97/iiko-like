@@ -24,7 +24,6 @@ export async function getAllMenuRepo(): Promise<AllMenuRow[]> {
         LEFT JOIN stop_list sl
         ON sl.dish_id = d.id
         AND sl.removed_at IS NULL `);
-        // console.log("result menu repo", result.rows);
     return result.rows;
     
 }
@@ -42,23 +41,15 @@ export async function findItemByIdRepo(itemId: number): Promise<MenuItemRow | nu
 }
 
 export async function getDishBySearchRepo(query: string): Promise<MenuItemRow[]>{
-    const res = await pool.query(`SELECT * FROM menu_items WHERE name ILIKE $1`, [`%${query}%`]);
+    const res = await pool.query(`
+        SELECT * 
+        FROM menu_items mi
+        WHERE name ILIKE $1
+        AND NOT EXISTS (
+            SELECT 1
+            FROM stop_list sl
+            WHERE mi.id = sl.dish_id
+            AND removed_at IS NULL
+        )`, [`%${query}%`]);
     return res.rows;
 }
-
-
-// export async function getCurrentStopListRepo() {
-//     const res = await pool.query(`SELECT * FROM menu_items WHERE is_active = false`)
-//     return res.rows;
-// }
-
-// export async function addItemToStopRepo(itemId: number) {
-//     const res = await pool.query(`UPDATE menu_items SET is_active = false WHERE id = $1 RETURNING *`, [itemId]);
-//     console.log("catId in add to Stop Repo ", res.rows[0].category_id)
-//     return res.rows[0].category_id;
-// }
-
-// export async function deleteItemFromStopRepo(itemId: number) { 
-//     const res = await pool.query(`UPDATE menu_items SET is_active = true WHERE id = $1 RETURNING *`, [itemId]);
-//     return res.rows
-// }

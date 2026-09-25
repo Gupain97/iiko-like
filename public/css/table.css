@@ -40,6 +40,8 @@ button {
 
 /* ===== items ===== */
 .items {
+  max-height: 400px;
+  overflow-y: auto;
   background: #fff;
   border-radius: 8px;
   padding: 16px;
