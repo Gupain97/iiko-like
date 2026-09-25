@@ -11,3 +11,4 @@ export async function getWeather(lat: number, lon: number) {
 
   return res.json();
 }
+// Видимо стал блокироваться в РФ , пока что отключу его.

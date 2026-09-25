@@ -37,12 +37,12 @@ export async function removeFromStopListRepo(itemId: number, userId:number) {
     return res.rows[0];
 }
 
-export async function getDishFromStopRepo(itemId: number) {
+export async function getDishFromStopRepo(dishId: number) {
     const res = await pool.query(`
         SELECT * FROM stop_list 
         WHERE dish_id = $1 
         AND remainder < 1
-        AND removed_at IS NULL`, [itemId]);
+        AND removed_at IS NULL`, [dishId]);
     return res.rows;
 }
 
@@ -61,7 +61,6 @@ export async function checkDishRemainderRepo(dishId: number) {
     if ( res.rows.length < 1) {
         return 
     }
-    //console.log("check remainder:", res.rows[0].remainder);
     return res.rows[0].remainder;
 }
 

@@ -16,7 +16,7 @@ import { findOrderByOrderIdRepo,
         } from './order.repository';
 //import { findTableByTableIdRepo } from '../tables/tables.repository'
 ;
-import { AppError } from '../../errors/AppErrors';
+import { AppError, DishInStopList } from '../../errors/AppErrors';
 import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../users/users.repository';
@@ -26,6 +26,7 @@ import { stationService } from '../station/station.services';
 // import { wss } from '../../index';
 
 import { webSocketService } from '../../bootstrap';    
+import { getMarkItems } from '../order-items/orderItems.service';
 
 
 
@@ -50,6 +51,7 @@ export async function createOrder(tableId: number, userId: number, items:OrderIt
         userId,
         tableNumber,
         guestsCount,
+        source: "POS",
         status: "OPEN",
         tableId,
         createdAt: new Date(),
@@ -76,7 +78,6 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         return mapOrderFullDTO(existingOrder);
     } else if (userRole && ADMIN_ROLES.includes(userRole)) {
         const order = await getHimOrderByTableRepo(tableId, userId);
-      //  console.log("userRole:", userRole, ADMIN_ROLES);
         return mapOrderFullDTO(order);
     }
     if (existingOrder.length < 1 ) {
@@ -88,6 +89,7 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
         userId,
         tableNumber,
         guestsCount,
+        source: "POS",
         status: "OPEN",
         tableId,
         createdAt: new Date(),
@@ -108,10 +110,12 @@ export async function printOrder(orderId : number) : Promise<OrderFullDTO | null
 
     const order = await findOrderByOrderIdRepo(orderId);
     if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
-
+    const checkStopList = await getMarkItems(orderId);
+    console.log(checkStopList); 
+    if ( checkStopList.length > 0 ) throw new DishInStopList();
     const markItems = await markItemsPrintedRepo(orderId);
     const ticketId = await stationService.addOrder(orderId);
-    await stationService.addItem(markItems, ticketId);
+    await stationService.addItem(markItems, ticketId); // здесь просто прощупывание работы через классы
     webSocketService.sendMessage('message');
     
     const res = await findOrderByOrderIdRepo(orderId);

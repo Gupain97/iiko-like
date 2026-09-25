@@ -1,7 +1,6 @@
 import express from 'express'; 
 import authRouter from './modules/auth/auth.routes'; 
 import path from 'path';
-// import tablesRouter from './modules/tables/tables.routes';
 import ordersRoutes from './modules/orders/order.routes';
 import menuRoutes from './modules/menu/menu.routes';
 import adminRoutes from './admin/admin.ruotes';
@@ -78,22 +77,3 @@ pool.query("SELECT NOW()")
 
 
 app.use(errorHandler);
-
-// app.get('/table', (req, res) =>{
-//     res.sendFile(path.join(__dirname, '../public/html/table.html'));
-// });
-
-
-
-// app.use(express.static(path.join(__dirname, '../public')));
-
-
-// app.get('/', (req, res) =>{
-//     res.send("Сервер запущен");
-// });
-
-// const PORT = 3000 
-
-// app.listen(PORT, () =>{
-//     console.log("Сервер запущен на порту ${PORT}");
-// });

@@ -1,4 +1,4 @@
-import { AppError, ItemStatusError } from "../../errors/AppErrors";
+import { AppError, DishInStopList, ItemStatusError, ValidationError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
 import { getAllMenu } from "../menu/menu.services";
 import { OrderDTO, OrderFullDTO } from "../orders/order.dto";
@@ -6,18 +6,18 @@ import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
 import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
 import { getOrderById } from "../orders/order.services";
 import { checkDishInStop, checkDishRemainder, decrementRemainder } from "../stop-list/stop-list.services";
-import { getUserRoleRepo } from "../users/users.repository";
-import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
+import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getMarkItemsRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
 
 
+const topRoles = ["MANAGER", "DIRECTOR"];
 
-
-export async function addItemFromDB(orderId: number, menuItemId: number) : Promise<any  | undefined> { // поставить потом тип возвращаемых данных
+export async function addItemFromDB(orderId: number, menuItemId: number, qty?: number) : Promise< any  | undefined> { // поставить потом тип возвращаемых данных
     const existingOrder = await findOrderByOrderIdRepo(orderId)
     const order = mapOrderWithItems(existingOrder);
     const itemData = await findItemByIdRepo(menuItemId); // menu_item
     const checkDish = await checkDishInStop(menuItemId);
     const remainder = await checkDishRemainder(menuItemId);
+    const quantity = qty ?? 1;
     let menu = await getAllMenu();
     if (checkDish) {
         return {
@@ -59,7 +59,7 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
         printedAt: null,
         name: itemData.name,
         price: itemData.price,
-        quantity: 1,
+        quantity: quantity,
         menuItemId: menuItemId
     };
     
@@ -85,9 +85,9 @@ export async function addItemFromDB(orderId: number, menuItemId: number) : Promi
 
 export async function addItemQuantity(itemId: number, orderId: number) : Promise<OrderDTO | null> {
     const item = await  getItemByItemIdRepo(itemId);
-    const menuItemId = item.menu_item_id;
+    const menuItemId = item.menu_item_id; // snake
     const check = await checkDishInStop(menuItemId);
-    if (check) return null;
+    if (check) throw new DishInStopList();
 
     if (!item.printed) {
         await addItemQuantityRepo(itemId);
@@ -118,12 +118,11 @@ export async function decrementItemQantity(itemId: number, orderId: number): Pro
     
 }
 
-export async function deletItemFromOrder(itemId: number, orderId: number, userId: number): Promise<OrderFullDTO | null> {
+export async function deletItemFromOrder(itemId: number, orderId: number, userRole: any): Promise<OrderFullDTO | null> {
     const order = await getOrderById(orderId);
     if (!order || order.status === "PRECHECK") return order;
     const item = await getItemByItemIdRepo(itemId);
-    const userRole = await getUserRoleRepo(userId);
-    if (item.printed && userRole.role !== "MANAGER") throw new ItemStatusError();
+    if (item.printed && !topRoles.includes(userRole)) throw new ItemStatusError();
     await deleteItemRepo(itemId);
     const res = await findOrderByOrderIdRepo(orderId);
     return mapOrderFullDTO(res);
@@ -132,6 +131,13 @@ export async function deletItemFromOrder(itemId: number, orderId: number, userId
 
 export async function getPrintedCashForWaiter(userId: number) {
     const res = await getPrintedCashForWaiterRepo(userId);
+    return res;
+}
+
+
+
+export async function getMarkItems(orderId: number) {
+    const res = await getMarkItemsRepo(orderId);
     return res;
 }
 

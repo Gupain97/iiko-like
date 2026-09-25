@@ -196,15 +196,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function incrementItems() {
     if (!selectedItemId) return
-    const res = await fetch(`/api/order-items/${selectedItemId}/increment`, {
+    console.log("increment")
+    
+    try {
+      const res = await fetch(`/api/order-items/${selectedItemId}/increment`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ orderId: currentOrder.id})
 
     });
     
+    if (!res.ok) { 
+      const errorData = await res.json();
+      throw new Error(errorData.message);
+    }
+
     currentOrder = await res.json();
     await renderOrder();
+    
+  } catch (err) {
+    console.log("отработал катч");
+    console.error("операция отколнена", err);
+  }
+    
     
   };
 
@@ -234,8 +248,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
        const res = await fetch(`/api/order-items/${selectedItemId}/delete`, {
         method: "DELETE",
-        headers: {'Content-Type': 'application/json', 'x-user-role': user.role},
-        body: JSON.stringify({ orderId: currentOrder.id, userId: user.id})
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ orderId: currentOrder.id}),
+        credentials: 'include'
       });
       selectedItemId = null;
       const data  = await res.json();
@@ -264,6 +279,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         
           currentOrder = await res.json();
+          if (!res.ok) {
+            throw new Error(currentOrder.message);
+          }
           selectedItemId = null;
           await renderOrder();
           

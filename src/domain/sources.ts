@@ -1,0 +1,1 @@
+export type Sources = "CALL-CENTER" | "POS"

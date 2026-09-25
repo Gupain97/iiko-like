@@ -36,3 +36,9 @@ export class ItemStatusError extends AppError {
         super(message, 400);
     }
 }
+
+export class DishInStopList extends AppError {
+    constructor(message = "Блюдо находится в стоп-листе!") {
+        super(message, 422);
+    }
+}

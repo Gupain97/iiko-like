@@ -1,0 +1,2 @@
+ALTER TABLE customer_data
+RENAME custoьer_name TO customer_name

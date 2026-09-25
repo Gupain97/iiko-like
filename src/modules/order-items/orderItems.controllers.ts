@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { addItemFromDB, addItemQuantity, decrementItemQantity, deletItemFromOrder } from "./orderItems.service";
+import { AuthRequest } from "../auth/auth.types/auth-request";
 
 
 
@@ -31,11 +32,12 @@ export const decrementItemQantityController = async (req: Request, res: Response
     res.json(result);
 }
 
-export const deleteItemController = async (req: Request, res: Response) => {
+export const deleteItemController = async (req: AuthRequest, res: Response) => {
     const itemId = Number(req.params.itemId);
     const orderId = Number(req.body.orderId);
-    const userId = Number(req.body.userId);
-    const result = await deletItemFromOrder(itemId, orderId, userId);
+    if (!req.user) throw new Error("USER IS NOT DEFINED");
+    const userRole = req.user.role;
+    const result = await deletItemFromOrder(itemId, orderId, userRole);
     res.json(result);
 }
 
