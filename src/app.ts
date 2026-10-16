@@ -3,7 +3,7 @@ import authRouter from './modules/auth/auth.routes';
 import path from 'path';
 import ordersRoutes from './modules/orders/order.routes';
 import menuRoutes from './modules/menu/menu.routes';
-import adminRoutes from './admin/admin.ruotes';
+import adminRoutes from './admin/admin.routes';
 import shiftsRoutes from './modules/shifts/shifts.routes';
 import deliveryRoutes from './modules/delivery/delivery.routes';
 import orderItemsRoutes from './modules/order-items/orderItems.routes';
@@ -64,9 +64,12 @@ app.get('/main', (req, res) => {
 });
 
 app.get('/admin', (req, res)  => {
-    res.sendFile(path.join(__dirname, '../public/html/admin.html'));
+    res.sendFile(path.join(__dirname, '../public/html/adminLogin.html'));
 });
 
+app.get('/admin/main', (req, res)  => {
+    res.sendFile(path.join(__dirname, '../public/html/admin.html'));
+});
 
 app.get('/station', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/html/station.html'));

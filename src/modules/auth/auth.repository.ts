@@ -1,6 +1,6 @@
 import { pool } from "../../config/db";
 import { Station } from "../station/station.types";
-import { UserRaw } from "../users/users.types";
+import { UserRaw } from "./users/users.types";
 import { SessionRaw } from "./auth.types/session.type";
 
 

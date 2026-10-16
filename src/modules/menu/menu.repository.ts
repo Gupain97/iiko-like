@@ -1,5 +1,5 @@
 import { pool } from "../../config/db";
-import { AllMenuRow, Categories, MenuItem, MenuItemRow } from "./menu.types";
+import { AllMenuRow, Categories, MenuItem, MenuItemRow, MenuItemWithRecipRaw } from "./menu.types";
 
 
 export async function getAllMenuRepo(): Promise<AllMenuRow[]> {
@@ -52,4 +52,36 @@ export async function getDishBySearchRepo(query: string): Promise<MenuItemRow[]>
             AND removed_at IS NULL
         )`, [`%${query}%`]);
     return res.rows;
+}
+
+export async function getDishForAdminRepo(dishId: number) : Promise<MenuItemWithRecipRaw> {
+    const res = await pool.query(`
+        SELECT
+        mi.id AS dish_id,
+        mi.name,
+        mi.price,
+        mi.category_id,
+        mi.is_active,
+
+        c.name AS category_name,
+    
+        COALESCE(json_agg(json_build_object(
+            'ingredient_id', i.id,
+            'ingredient_name', i.name,
+            'quantity', di.quantity,
+            'unit', i.unit
+        )) FILTER (WHERE di.id  IS NOT NULL), '[]') AS ingredients
+
+        FROM menu_items mi
+
+        LEFT JOIN dish_ingredients di ON di.menu_item_id = mi.id
+        LEFT JOIN ingredients i ON di.ingredient_id = i.id
+        LEFT JOIN category c ON mi.category_id = c.id
+         
+        WHERE mi.id = $1
+        GROUP BY mi.id, c.id
+        `, [dishId]);
+
+        return res.rows[0];
+
 }

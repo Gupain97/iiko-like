@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Role } from '../modules/users/users.types';
+import { Role } from '../modules/auth/users/users.types';
 import { AuthRequest } from '../modules/auth/auth.types/auth-request';
 
 export type User = {

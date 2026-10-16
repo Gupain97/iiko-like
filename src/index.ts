@@ -1,5 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { app } from './app'; 
 import './websocket/firstSocet';
+
+
+
+
+
+
 
 const PORT = 3000;
 

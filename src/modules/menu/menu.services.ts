@@ -1,6 +1,7 @@
 
-import { mapMenuDTO, mapMenuItems } from "./menu.mapper";
-import {getAllMenuRepo, getCategoriesRepo, getDishBySearchRepo} from "./menu.repository";
+import { MenuItemWithRecipeDTO } from "./menu.dto";
+import { mapMenuDTO, mapMenuItems, mapMenuItemWithRecDTO } from "./menu.mapper";
+import {getAllMenuRepo, getCategoriesRepo, getDishBySearchRepo, getDishForAdminRepo} from "./menu.repository";
 import { AllMenuDTO, AllMenuRow, Categories, MenuItem } from "./menu.types";
 
 
@@ -16,4 +17,10 @@ export async function getAllMenu(): Promise<{ items: AllMenuDTO[]; categories: C
 export async function getDishBySearch(query: string): Promise<MenuItem[]> {
     const res = await getDishBySearchRepo(query);
     return mapMenuItems(res);
-}
+};
+
+
+export async function getDishForAdmin(dishId:number): Promise<MenuItemWithRecipeDTO> {
+    const res = await getDishForAdminRepo(dishId);
+    return mapMenuItemWithRecDTO(res);
+};

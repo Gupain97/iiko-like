@@ -19,8 +19,8 @@ import { findOrderByOrderIdRepo,
 import { AppError, DishInStopList } from '../../errors/AppErrors';
 import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
 import { getUserStatusRepo } from '../shifts/shifts.repository';
-import { getUserRoleRepo } from '../users/users.repository';
-import { Role } from '../users/users.types';
+import { getUserRoleRepo } from '../auth/users/users.repository';
+import { Role } from '../auth/users/users.types';
 import { stationService } from '../station/station.services';
 // import { WebSocketService } from '../../websocet/firstSocet';
 // import { wss } from '../../index';
