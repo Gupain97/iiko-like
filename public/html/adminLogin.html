@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Авторизация</title>
+
+    <link rel="stylesheet" href="/css/adminLogin.css">
+</head>
+
+<body>
+
+    <main class="auth">
+        <h1>Вход</h1>
+        <p>Введите данные для авторизации</p>
+
+        <form id="loginForm">
+
+            <div class="field">
+                <label for="login">Логин</label>
+                <input
+                    type="text"
+                    id="login"
+                    name="login"
+                    placeholder="Введите логин"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="password">Пароль</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Введите пароль"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" id="submitBtn">
+                Войти
+            </button>
+
+            <div id="message" class="message"></div>
+
+        </form>
+    </main>
+
+    <script src="/js/adminLogin.js"></script>
+</body>
+</html>

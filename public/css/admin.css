@@ -60,3 +60,69 @@ button.action {
   padding: 8px 12px;
   cursor: pointer;
 }
+
+/* стили для блюд и рецептов */
+
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-entry {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding: 16px 12px;
+    border-radius: 8px;
+
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.item-row:hover {
+    background: #f3f4f6;
+}
+
+.item-row:focus-visible {
+    outline: 2px solid #4f46e5;
+    outline-offset: -2px;
+}
+
+.item-row span:first-child {
+    font-weight: 600;
+}
+
+.item-row span:last-child {
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.recipe-details {
+    padding: 8px 16px 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.recipe-details[hidden] {
+    display: none;
+}
+
+.recipe-details h4 {
+    margin: 8px 0 12px;
+}
+
+.recipe-content ul {
+    padding-left: 20px;
+}
+
+.recipe-content li {
+    padding: 6px 0;
+    color: #374151;
+}

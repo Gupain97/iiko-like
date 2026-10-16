@@ -1,10 +1,10 @@
 import { pool } from "../../config/db";
 import { openShift } from "../shifts/shifts.services";
-import { Role, User, UserRaw } from "../users/users.types";
+import { Role, User, UserRaw } from "./users/users.types";
 import { stationService } from "../station/station.services";
 import { v4 as uuidv4} from 'uuid';
 import { deleteSessionRepo, getSessionRepo, getStationRepo, getUserForSessionIdRepo, openSessionRepository } from "./auth.repository";
-import { getUserForPinRepo, getUsersRepo } from "../users/users.repository";
+import { getUserForPinRepo, getUsersRepo } from "./users/users.repository";
 import { SessionType } from "./auth.types/session.type";
 import { mapSessionRaw } from "./auth.mapper";
 import { Station } from "../station/station.types";

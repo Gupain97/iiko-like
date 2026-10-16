@@ -35,10 +35,16 @@ export class ItemStatusError extends AppError {
     constructor(message = 'Item status invalid for this action') {
         super(message, 400);
     }
-}
+};
 
 export class DishInStopList extends AppError {
     constructor(message = "Блюдо находится в стоп-листе!") {
         super(message, 422);
     }
-}
+};
+
+export class InvalidCredentials extends AppError {
+    constructor(message = "Неверный логин или пароль!") {
+        super(message, 401);
+    }
+};

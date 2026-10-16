@@ -1,18 +1,25 @@
-import { getAllMenuRepo } from "../modules/menu/menu.repository";
-import { NewMenuItem } from "../modules/menu/menu.types";
-import { NewUser } from "../modules/users/users.types";
+import { InvalidCredentials } from "../errors/AppErrors";
+import { getAllMenu } from "../modules/menu/menu.services";
+import { AllMenuDTO, NewMenuItem } from "../modules/menu/menu.types";
+import { NewUser } from "../modules/auth/users/users.types";
 import { 
     addCategoryRepo, 
     getAllCategoriesRepo, 
     addMenuItemRepo, 
     getAllUsersRepo,
-    addUserRepo
+    addUserRepo,
+    getAdminUserRepo,
+    getIgredientsRepo,
+    addIngredientRepo,
+    getIngredientsForDish,
+    updateRecipeRepo
 } from "./admin.repository";
+import { AdminUser, Ingredient, NewIngredient } from "./admin.types";
 
 
-export async function getAllItems() {
-    const res = await getAllMenuRepo();
-    return res;
+export async function getAllItems(): Promise<AllMenuDTO[]> {
+    const res = await getAllMenu(); // сервис меню 
+    return res.items;
 }
 
 export async function getAllCategories() {
@@ -48,5 +55,39 @@ export async function addUser(name:string, surname: string, role: string, pin: n
         pin
     }
     await addUserRepo(user);
+};
+
+
+export async function getIngredients() : Promise<Ingredient[]> {
+    const ingredients = await getIgredientsRepo();
+    const res = []
+    for (const row of ingredients) {
+        res.push({
+            id: row.id,
+            name: row.name,
+            quantity: row.quantity,
+            unit: row.unit,
+            createdAt: row.created_at // поменяем
+        });
+    }
+
+    return res 
 }
+
+export async function addIngredient(name: string, unit: string, quantity:number) {
+    await addIngredientRepo(name, unit, quantity);
+};
+
+export async function updateDishRecipe(dishId: number, ingredients: NewIngredient[]) {
+    const exists = await getIngredientsForDish(dishId);
+    const existsId = new Set(
+        exists.map(ingredient => ingredient.ingredient_id)
+    );
+    const insert = ingredients.filter(ingredient => !existsId.has(ingredient.ingredientId));
+    await updateRecipeRepo(dishId, insert);
+    
+}
+
+
+
 

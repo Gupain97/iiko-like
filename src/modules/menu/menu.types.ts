@@ -45,3 +45,22 @@ export interface Categories {
     id: number;
     name: string;
 }
+
+export interface IngredientsRaw {
+    ingredient_id: number,
+    ingredient_name: string;
+    quantity: number;
+    unit: string;
+}
+
+
+export interface MenuItemWithRecipRaw {
+    dish_id: number;
+    name: string;
+    price: number;
+    category_id: number;
+    category_name: string;
+    is_active: boolean;
+    ingredients: IngredientsRaw[];
+    
+};
