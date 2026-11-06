@@ -279,6 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           });
         
           currentOrder = await res.json();
+          console.log('currentOrder', currentOrder) ;
           if (!res.ok) {
             throw new Error(currentOrder.message);
           }
@@ -588,7 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       div.innerHTML = `
         <div class="menu-item-name">${item.name}</div>
-        <div class="menu-item-price">${item.price / 100} ₽</div>
+        <div class="menu-item-price">${item.price} ₽</div>
         <div class="menu-item-remainder">${item.remainder || ''}</div>
       `;
 

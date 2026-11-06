@@ -1,0 +1,2 @@
+ALTER TABLE sale_item_ingredients
+ADD COLUMN ingredient_id INTEGER

@@ -18,5 +18,34 @@ export interface NewIngredient { // Хотя не то чтобы нью , пр�
     ingredientId : number,
     quantity: number,
     unit: string
+};
 
+
+export interface Revenue {
+    id: number,
+    name: string,
+    surname: string,
+    revenue: number
+};
+
+export interface SalesReult {
+    employes: Revenue[],
+    totalRevenue: number
+};
+
+export interface IngredientUsageRaw {
+    id: number, 
+    name: string,
+    unit: string,
+    quantity: number,
+    ingredient_id: number
+};
+
+export interface IngredientUsageDTO {
+    id: number, 
+    name: string,
+    unit: string,
+    quantity: number,
+    ingredientId: number
+    
 }

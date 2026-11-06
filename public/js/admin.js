@@ -1,11 +1,13 @@
 
 const content = document.getElementById('content');
+import { renderAnalytics } from "./analytics.js";
+
 
 // ================================
 // ОБЩИЕ ФУНКЦИИ
 // ================================
 
-function showView(view) {
+async function showView(view) {
   switch (view) {
     case 'categories':
       renderCategories();
@@ -13,11 +15,14 @@ function showView(view) {
     case 'items':
       renderItems();
       break;
-    case 'users':
+      case 'users':
       renderUsers();
       break;
-    case 'ingredients':
-      renderIngredients();
+      case 'ingredients':
+        renderIngredients();
+        break;
+    case 'analyticks':
+      await renderAnalytics(document.querySelector('#content'));
       break;
   }
 }
@@ -964,3 +969,4 @@ function renderRecipeEditor(
 // ================================
 
 showView('categories');
+window.showView = showView;

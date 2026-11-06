@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { getAllItems, getAllCategories, addCategory, addMenuItem, getAllUsers, addUser, getIngredients, addIngredient, updateDishRecipe} from "./admin.services";
+import { getAllItems, getAllCategories, addCategory, addMenuItem, getAllUsers, addUser, getIngredients, addIngredient, updateDishRecipe, getSales, getIngredientsUsage} from "./admin.services";
 import { getDishForAdminRepo } from "../modules/menu/menu.repository";
 import { getDishForAdmin } from "../modules/menu/menu.services";
 import { getAdminUser, loginAdmin } from "./admin.auth";
+import { getIngredientsUsageRepo } from "./admin.repository";
 
 
 export const getPossiblyfunctionsController = async (req: Request, res: Response) => {
@@ -78,4 +79,34 @@ export const updateRecipeController = async (req:Request, res:Response) => {
    const dishId = Number(req.params.itemId);
    await updateDishRecipe(dishId, ingredients);
    
+};
+
+
+export const getSalesController = async (req:Request, res:Response) => {
+    const rawUserId = req.query.userId;
+    let userId : number | null = null ;
+
+    const from =new Date(String(req.query.from));
+    const to = new Date(String(req.query.to));
+    if (rawUserId) {
+        userId = Number(req.query.userId);
+    }
+    const result = await getSales(userId, from, to);
+
+
+    res.json(result);
+};
+
+
+
+export const getIngredientsUsageController = async (req: Request, res: Response) => {
+    const from = new  Date(String(req.query.from));
+    const to = new Date(String(req.query.to));
+    console.log('from, to', from, to);
+    if (!from || !to) return;
+    const result = await getIngredientsUsage(from, to);
+    res.json(result);
+
+
+
 }
