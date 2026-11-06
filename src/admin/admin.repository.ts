@@ -1,7 +1,7 @@
 import { pool } from "../config/db";
 import { NewMenuItem } from "../modules/menu/menu.types";
 import { NewUser } from "../modules/auth/users/users.types";
-import { AdminUser, Ingredient, NewIngredient } from "./admin.types";
+import { AdminUser, Ingredient, IngredientUsageRaw, NewIngredient, Revenue } from "./admin.types";
 
 
 export async function getAllCategoriesRepo() {
@@ -83,7 +83,47 @@ export async function updateRecipeRepo(dishId: number, ingredients:NewIngredient
         (menu_item_id, ingredient_id, quantity)
         VALUES ${placeholder.join(', ')}
         `
-    await pool.query(sql, values);
-    
-    
+    await pool.query(sql, values); 
+};
+
+
+export async function getSalesRepo(userId: number|null, from: Date, to:Date): Promise<Revenue[]> {
+    const res = await pool.query(`
+        SELECT 
+        
+        u.id,
+        u.name,
+        u.surname,
+        COALESCE(SUM(s.total_amount), 0) AS revenue
+
+        FROM users u
+        LEFT JOIN sales s 
+            ON s.user_id = u.id
+            AND $2 <= closed_at
+            AND $3 >= closed_at
+        WHERE ($1::int IS NULL OR u.id = $1)
+        GROUP BY u.id, u.name;
+        `, [userId, from, to])
+    return res.rows;
+};
+
+
+export async function getIngredientsUsageRepo(from: Date, to: Date): Promise<IngredientUsageRaw[]> {
+    const result = await pool.query(`
+        SELECT
+            sii.id,
+            sii.name,
+            sii.unit,
+            sii.quantity,
+            sii.ingredient_id
+            
+
+        FROM sale_item_ingredients sii
+        JOIN sale_items si ON sii.sale_item_id = si.id
+        JOIN sales s ON s.id = si.sale_id
+        AND $1 <= s.closed_at
+        AND $2 >= s.closed_at
+        `, [from, to]);
+    return result.rows
+
 }

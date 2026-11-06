@@ -1,12 +1,26 @@
+import { PoolClient } from "pg";
 import { AppError, DishInStopList, ItemStatusError, ValidationError } from "../../errors/AppErrors";
 import { findItemByIdRepo } from "../menu/menu.repository";
 import { getAllMenu } from "../menu/menu.services";
 import { OrderDTO, OrderFullDTO } from "../orders/order.dto";
 import { mapOrderFullDTO, mapOrderWithItems } from "../orders/order.mapper";
-import { findOrderByOrderIdRepo, getNextOrderItemsIdSeq,  } from "../orders/order.repository";
+import { findOrderByOrderIdRepo,  } from "../orders/order.repository";
 import { getOrderById } from "../orders/order.services";
 import { checkDishInStop, checkDishRemainder, decrementRemainder } from "../stop-list/stop-list.services";
-import { addItemQuantityRepo, addItemRepo, decrementItemQantityRepo, deleteItemRepo, getAddedItemOrUndefinedRepo, getItemByItemIdRepo, getMarkItemsRepo, getPrintedCashForWaiterRepo } from "./orderItems.repository";
+import { mapItemsToSale } from "./orderItems.mapper";
+import { 
+    addItemQuantityRepo, 
+    addItemRepo, 
+    addItemsToSaleRepo, 
+    decrementItemQantityRepo, 
+    deleteItemRepo, getAddedItemOrUndefinedRepo, 
+    getItemByItemIdRepo, 
+    getItemsByOrderIdRepo, 
+    getMarkItemsRepo, 
+    getPrintedCashForWaiterRepo, 
+    markItemsPrintedRepo
+} from "./orderItems.repository";
+import { OrderItemSale } from "./orderItems.types";
 
 
 const topRoles = ["MANAGER", "DIRECTOR"];
@@ -53,7 +67,6 @@ export async function addItemFromDB(orderId: number, menuItemId: number, qty?: n
 
     
     const item = {
-        id: getNextOrderItemsIdSeq(),
         orderId: order.id,
         printed: false,
         printedAt: null,
@@ -78,7 +91,7 @@ export async function addItemFromDB(orderId: number, menuItemId: number, qty?: n
         menu: menu,
         categoryId: menu.categories
     }; 
-}
+};
 
 
 
@@ -97,7 +110,7 @@ export async function addItemQuantity(itemId: number, orderId: number) : Promise
 
     const res = await findOrderByOrderIdRepo(orderId);
     return mapOrderFullDTO(res);
-}
+};
 
 export async function decrementItemQantity(itemId: number, orderId: number): Promise<{ order: OrderFullDTO | null ; itemId: number | null ; }> {
     const item = await  getItemByItemIdRepo(itemId);
@@ -116,7 +129,7 @@ export async function decrementItemQantity(itemId: number, orderId: number): Pro
         itemId: itId 
     };
     
-}
+};
 
 export async function deletItemFromOrder(itemId: number, orderId: number, userRole: any): Promise<OrderFullDTO | null> {
     const order = await getOrderById(orderId);
@@ -126,18 +139,35 @@ export async function deletItemFromOrder(itemId: number, orderId: number, userRo
     await deleteItemRepo(itemId);
     const res = await findOrderByOrderIdRepo(orderId);
     return mapOrderFullDTO(res);
-}
+};
 
 
 export async function getPrintedCashForWaiter(userId: number) {
     const res = await getPrintedCashForWaiterRepo(userId);
     return res;
-}
+};
 
 
 
 export async function getMarkItems(orderId: number) {
     const res = await getMarkItemsRepo(orderId);
     return res;
+};
+
+export async function getOrderItems(orderId: number) {
+    const items = await getItemsByOrderIdRepo(orderId);
+    return items;
+};
+
+export async function markItemsPrinted(client: PoolClient, orderId: number) {
+    const res = await markItemsPrintedRepo(client, orderId);
+   // throw new Error('Ошибка печати');
+    return res;
+}
+
+
+
+export async function addItemsToSale(client: PoolClient, items:OrderItemSale[]) {
+    const res = await addItemsToSaleRepo(client, items);
 }
 

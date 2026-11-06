@@ -1,10 +1,11 @@
+import { PoolClient } from "pg";
 import { pool } from "../../config/db";
-import { mapOrderWithItems } from "../orders/order.mapper";
-import { OrderItem } from "../orders/order.types";
+import { mapOrderWithItems } from "../orders/order.mapper";;
 import { Order } from "../orders/order.types";
+import { OrderItem, OrderItemRaw, OrderItemSale } from "./orderItems.types";
 
 
-export async function getItemsByOrderIdRepo(orderId: number): Promise<OrderItem[]>{
+export async function getItemsByOrderIdRepo(orderId: number): Promise<OrderItemRaw[]>{
 
     const result = await pool.query(
         `SELECT * FROM order_items WHERE order_id = $1`,
@@ -36,8 +37,8 @@ export async function addItemRepo(item: any ): Promise<OrderItem> {
 }
 
 
-export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
-    const res = await pool.query(
+export async function markItemsPrintedRepo(client: PoolClient, orderId: number): Promise<any[]> {
+    const res = await client.query(
         `UPDATE order_items SET printed = true,
         printed_at = NOW()
         WHERE printed = false 
@@ -47,12 +48,12 @@ export async function markItemsPrintedRepo(orderId: number): Promise<any[]> {
         
     );
     
-    await pool.query(`UPDATE orders SET status = $1 WHERE status = 'OPEN' AND id = $2 RETURNING *`,["PRINTED", orderId]);
+    await client.query(`UPDATE orders SET status = $1 WHERE status = 'OPEN' AND id = $2 RETURNING *`,["PRINTED", orderId]);
     
     return res.rows;
 }
 
-export async function getItemByItemIdRepo(itemId: number) {
+export async function getItemByItemIdRepo(itemId: number): Promise<OrderItemRaw> {
     const result = await pool.query(
         `SELECT 
         oi.id AS order_item_id,
@@ -126,4 +127,49 @@ export async function getMarkItemsRepo(orderId: number) {
         `, [orderId]);
 
     return res.rows 
-}
+};
+
+
+export async function addItemsToSaleRepo(client:PoolClient, items: OrderItemSale[]) {
+    if (items.length === 0  ) return;
+    const saleId = items[0].saleId; // Костыль
+
+    const values : (string | number)[] = items.flatMap(
+        (item) : (string | number)[] => [
+            item.saleId,
+            item.menuItemId,
+            item.name,
+            item.quantity,
+            item.price,
+            item.lineTotal
+    ]
+    );
+
+    const placeholder = items.map((_, index) => {
+        const offset = index * 6;
+
+        return `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, $${offset + 6})`
+    });
+
+    const sql = `
+    INSERT INTO sale_items (sale_id, menu_item_id, dish_name, quantity, price, line_total)
+    VALUES ${placeholder.join(', ')}
+    RETURNING *
+    `
+    const res = await client.query(sql, values);
+
+    await client.query(`
+        INSERT INTO sale_item_ingredients (name, quantity, unit, sale_item_id, ingredient_id )
+        SELECT
+            i.name,
+            di.quantity * si.quantity,
+            i.unit,
+            si.id,
+            i.id AS ingredient_id
+
+        FROM sale_items si
+        JOIN dish_ingredients di ON si.menu_item_id = di.menu_item_id
+        JOIN ingredients i ON i.id = di.ingredient_id
+        WHERE si.sale_id = $1
+        `, [saleId])
+};

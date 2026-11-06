@@ -1,24 +1,14 @@
 import { pool } from "../../config/db";
 
-import { Order, OrderItem, NewOrder } from "./order.types";
+import { Order, NewOrder, Sales } from "./order.types";
 import { orders } from "./order.storage"; 
 //import { getActiveOrders } from "./order.services";
 import { getItemsByOrderIdRepo } from "../order-items/orderItems.repository";
 import { mapOrderWithItems,  mapRowOrder } from "./order.mapper";
 import { OrderWithNameRow } from "./order.raw.types";
 import { OrderSlotRow } from "./order.db.types";
+import type { PoolClient } from "pg";
 
-
-export let orderIdSeq = 1;
-export let orderItemsIdSeq = 1;
-
-export function getNextOrderIdSeq(): number {
-    return orderIdSeq++;
-}
-
-export function getNextOrderItemsIdSeq(): number {
-    return orderItemsIdSeq++;
-}
 
 export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWithNameRow[]> {
 
@@ -46,7 +36,8 @@ export async function findOrderByOrderIdRepo(orderId: number) : Promise<OrderWit
             oi.printed_at,
 
             ou.name AS waiter_name,
-            ou.surname AS waiter_surname
+            ou.surname AS waiter_surname,
+            ou.id AS waiter_id
             
             FROM orders o
             LEFT JOIN order_items oi ON oi.order_id = o.id
@@ -215,8 +206,8 @@ export async function precheckOrderRepo(orderId: number) {
 }
 
 
-export async function closeOrderRepo(orderId: number, userId: number) {
-    const row = await pool.query(
+export async function closeOrderRepo(client: PoolClient, orderId: number, userId: number, sales: Sales) {
+    await client.query(
         `UPDATE orders SET 
         closed_at = NOW(),
         table_id = null, 
@@ -226,6 +217,12 @@ export async function closeOrderRepo(orderId: number, userId: number) {
 
         WHERE id = $2 RETURNING *`, ["CLOSED", orderId, userId]
     );
+
+    const res = await pool.query(`
+        INSERT INTO sales (order_id, user_id, total_amount) VALUES ($1, $2, $3) RETURNING *
+        `, [sales.orderId, sales.userId, sales.totalAmount]);
+
+    return res.rows[0];
 
 }
 

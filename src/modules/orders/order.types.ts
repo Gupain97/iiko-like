@@ -1,5 +1,6 @@
 import { OrderStatus } from "../../domain/orderStatus";
 import { Sources } from "../../domain/sources";
+import { OrderItem } from "../order-items/orderItems.types";
 
 export interface Order {
     id: number,
@@ -30,12 +31,19 @@ export type NewOrder = Omit<Order, 'id'>
 // }
 
 
-export interface OrderItem {
-    id: number, 
+// export interface OrderItem {
+//     id: number, 
+//     orderId: number,
+//     price: number, 
+//     name: string,
+//     quantity: number,
+//     printed : boolean,
+//     printedAt : Date | null,
+// }
+
+
+export interface Sales {
     orderId: number,
-    price: number, 
-    name: string,
-    quantity: number,
-    printed : boolean,
-    printedAt : Date | null,
+    userId: number,
+    totalAmount: number,
 }

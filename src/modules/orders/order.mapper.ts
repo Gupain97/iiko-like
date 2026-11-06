@@ -1,7 +1,8 @@
-import { Order, OrderItem } from "./order.types";
+import { Order, Sales } from "./order.types";
 import { OrderDTO, OrderItemDTO, OrderSlotsDTO, OrderFullDTO } from "./order.dto";
 import { OrderRow, OrderSlotRow } from "./order.db.types";
 import { OrderWithNameRow } from "./order.raw.types";
+import { OrderItem } from "../order-items/orderItems.types";
 
 
 export function mapOrderToDTO(order: Order): OrderDTO{
@@ -86,8 +87,10 @@ export function mapOrderWithItems(rows: any[]) : Order | undefined {
                  name: row.item_name,
                  quantity: row.quantity,
                  price: row.price,
+                 menuItemId: row.menu_item_id,
                  printed: row.printed,
-                 printedAt: row.printed_at
+                 printedAt: row.printed_at,
+                 comments: row.comments
 
 
                 });
@@ -152,27 +155,6 @@ export function mapOrderFullDTO(rows: OrderWithNameRow[]) : OrderFullDTO | null 
 
 
 export function mapOrderSlotDTO(rows: OrderSlotRow[] ) : OrderSlotsDTO[]{
-    // const res = [];
-    // for (const row of rows ) {
-    //     res.push({
-    //         id: row.id,
-    //         tableSlot: row.table_id,
-    //         tableNumber: row.table_number,
-    //         status: row.status,
-    //         papus: row.guest_count 
-    //     })
-    // }
-    // return res
-
-    // return rows.map( row => {
-    //     const dto : OrderSlotsDTO = {
-    //         id: row.id,
-    //         tableSlot: row.table_id,
-    //         tableNumber: row.table_number,
-    //         status: row.status
-            
-    //     };
-    //     return dto;
 
     return rows.map(row => ({
         id: row.id,
@@ -184,3 +166,13 @@ export function mapOrderSlotDTO(rows: OrderSlotRow[] ) : OrderSlotsDTO[]{
 
     
 }
+
+
+export function mapOrderToSales(order: OrderFullDTO, userId: number) : Sales {
+    const res : Sales = {
+        orderId: order.id,
+        userId,
+        totalAmount : order.total
+    };
+    return res 
+};

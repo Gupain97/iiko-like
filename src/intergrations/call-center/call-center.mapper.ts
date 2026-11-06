@@ -1,5 +1,5 @@
 import { CallCenterOrder, DeliveryOrder } from "../../modules/delivery/delivery.types";
-import { OrderItem } from "../../modules/orders/order.types";
+import { OrderItem } from "../../modules/order-items/orderItems.types";
 
 
 
@@ -28,9 +28,11 @@ export function mapCallCenterItems(item: any): OrderItem {
         orderId: item.order_id,
         price: item.price,
         name: item.item_name,
+        menuItemId: item.menu_item_id,
         quantity: item.quantity,
         printed: item.printed,
-        printedAt: item.printed_at
+        printedAt: item.printed_at,
+        comments: item.comments
 
     }
 }

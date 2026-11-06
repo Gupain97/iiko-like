@@ -11,7 +11,9 @@ import { getAllCategoriesController,
      loginAdminController,
      getIngredientsController,
      addIngredientController,
-     updateRecipeController
+     updateRecipeController,
+     getSalesController,
+     getIngredientsUsageController
     } from './admin.controller';
 import { asyncHandler } from '../middlewares/asyncHandler';
 import { adminAuthMiddleware } from '../middlewares/adminAuth';
@@ -39,6 +41,10 @@ router.post('/ingredients', adminAuthMiddleware, asyncHandler(addIngredientContr
 router.post('/get-item/:itemId/recipe', adminAuthMiddleware, asyncHandler(updateRecipeController));
 router.get('/users', getAllUsersController);
 router.post('/users', addUserController);
+
+
+router.get('/revenue', adminAuthMiddleware, asyncHandler(getSalesController));
+router.get('/ingredients-usage', adminAuthMiddleware, asyncHandler(getIngredientsUsageController));
 
 
 

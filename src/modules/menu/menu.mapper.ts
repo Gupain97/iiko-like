@@ -1,4 +1,4 @@
-import { OrderItem } from "../orders/order.types";
+
 import { IngredientsDTO, MenuItemWithRecipeDTO, StopListDto } from "./menu.dto";
 import { MenuItem , AllMenuRow, AllMenuDTO, MenuItemRow, MenuItemWithRecipRaw} from "./menu.types";
 

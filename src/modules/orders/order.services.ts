@@ -1,8 +1,9 @@
 //import { orders } from './order.storage'
-import { NewOrder, Order, OrderItem } from './order.types'
-import {  mapOrderToDTO, mapOrderFullDTO, mapOrderWithItems, mapOrderSlotDTO } from './order.mapper';
+import { NewOrder, Order } from './order.types'
+import {  mapOrderToDTO, mapOrderFullDTO, mapOrderWithItems, mapOrderSlotDTO, mapOrderToSales } from './order.mapper';
 import { OrderDTO, OrderFullDTO, OrderSlotsDTO} from './order.dto';
 import { OrderStatus } from '../../domain/orderStatus';
+
 
 import { findOrderByOrderIdRepo,
      findOrderByTableRepo,
@@ -17,8 +18,6 @@ import { findOrderByOrderIdRepo,
 //import { findTableByTableIdRepo } from '../tables/tables.repository'
 ;
 import { AppError, DishInStopList } from '../../errors/AppErrors';
-import { markItemsPrintedRepo } from '../order-items/orderItems.repository';
-import { getUserStatusRepo } from '../shifts/shifts.repository';
 import { getUserRoleRepo } from '../auth/users/users.repository';
 import { Role } from '../auth/users/users.types';
 import { stationService } from '../station/station.services';
@@ -26,7 +25,9 @@ import { stationService } from '../station/station.services';
 // import { wss } from '../../index';
 
 import { webSocketService } from '../../bootstrap';    
-import { getMarkItems } from '../order-items/orderItems.service';
+import { addItemsToSale, getMarkItems, getOrderItems, markItemsPrinted } from '../order-items/orderItems.service';
+import { mapItemsToSale, mapOrderItems } from '../order-items/orderItems.mapper';
+import { pool } from '../../config/db';
 
 
 
@@ -46,27 +47,26 @@ export const ADMIN_ROLES : Role[]= [
 ]
 
 
-export async function createOrder(tableId: number, userId: number, items:OrderItem[], guestsCount?: number, tableNumber?: number) {
-        const newOrder: NewOrder = {
-        userId,
-        tableNumber,
-        guestsCount,
-        source: "POS",
-        status: "OPEN",
-        tableId,
-        createdAt: new Date(),
-        precheckAt: null,
-        closedAt: null,
-        items
-    };
+// export async function createOrder(tableId: number, userId: number, items:OrderItem[], guestsCount?: number, tableNumber?: number) {
+//         const newOrder: NewOrder = {
+//         userId,
+//         tableNumber,
+//         guestsCount,
+//         source: "POS",
+//         status: "OPEN",
+//         tableId,
+//         createdAt: new Date(),
+//         precheckAt: null,
+//         closedAt: null,
+//         items
+//     };
 
-    const order = await saveOrderRepo(newOrder);
-    return order 
+//     const order = await saveOrderRepo(newOrder);
+//     return order 
     
-}
+// }
 
 export async function createOrGetOrder(tableId: number, userId: number, guestsCount?: number, tableNumber?: number): Promise<OrderFullDTO | null>{
-
 
     const existingOrder = await findOrderByTableRepo(tableId, userId);
     const order = mapOrderWithItems(existingOrder);
@@ -108,21 +108,29 @@ export async function createOrGetOrder(tableId: number, userId: number, guestsCo
 
 export async function printOrder(orderId : number) : Promise<OrderFullDTO | null > {
 
-    const order = await findOrderByOrderIdRepo(orderId);
-    if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
-    const checkStopList = await getMarkItems(orderId);
-    console.log(checkStopList); 
-    if ( checkStopList.length > 0 ) throw new DishInStopList();
-    const markItems = await markItemsPrintedRepo(orderId);
-    const ticketId = await stationService.addOrder(orderId);
-    await stationService.addItem(markItems, ticketId); // здесь просто прощупывание работы через классы
-    webSocketService.sendMessage('message');
-    
-    const res = await findOrderByOrderIdRepo(orderId);
-    
-    return mapOrderFullDTO(res);
-    
-   
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+
+        const order = await findOrderByOrderIdRepo(orderId);
+        if (!order || order[0].status !== "OPEN" && order[0].status !== "PRINTED") throw new Error("ORDER_NOT_FOUND"); // исправить 
+        const checkStopList = await getMarkItems(orderId); 
+        if ( checkStopList.length > 0 ) throw new DishInStopList();
+        const markItems = await markItemsPrinted(client, orderId);
+        const ticketId = await stationService.addOrder(orderId);
+        await stationService.addItem(markItems, ticketId); // здесь просто прощупывание работы через классы
+        webSocketService.sendMessage('message');
+        
+        await client.query("COMMIT");
+        const res = await findOrderByOrderIdRepo(orderId);
+        
+        return mapOrderFullDTO(res);
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw new Error("ERROR PRINTED");
+    } finally {
+        client.release();
+    }
 
 }
 
@@ -152,17 +160,42 @@ export async function cancelPrecheckOrder(orderId: number) {
 
 export async function closeOrderByOrderId(orderId: number, userId: number): Promise<OrderFullDTO | null > {
 
-    const order = await findOrderByOrderIdRepo(orderId);
-    
-    
-    if (!order || order[0].status !== "PRECHECK") {
-        throw new Error('ORDER_NOT_FOUND');
-    };
-    
-    await closeOrderRepo(orderId, userId);
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
 
-    return mapOrderFullDTO(order);
-}
+        const order = await findOrderByOrderIdRepo(orderId);
+        const mapOrder = mapOrderFullDTO(order);
+        if (!order || order[0].status !== "PRECHECK" || !mapOrder) {
+            throw new Error('ORDER_NOT_FOUND');
+        };
+    
+        const items = await getOrderItems(orderId);
+        const mapItems = mapOrderItems(items);
+        
+        
+        const closeOrder = await closeOrderRepo(
+            client,
+            orderId, 
+            userId, 
+            mapOrderToSales(mapOrder, userId)
+        ); // Тут пока криво , потом решим
+        const saleId = closeOrder.id;
+        const saleItems = mapItemsToSale(mapItems, saleId);
+        await addItemsToSale(client, saleItems);
+        await client.query("COMMIT");
+        return mapOrder;
+    } catch (error) {
+        await client.query("ROLLBACK");
+        console.error(error);
+        throw new Error('ТРАНЗАКЦИЯ НЕ ЗАВЕРШЕНА!');
+    
+    } finally {
+        client.release();
+    }
+
+};
+
 
 export async function getOrderById(orderId: number): Promise<OrderFullDTO | null > {
     const order = await findOrderByOrderIdRepo(orderId);

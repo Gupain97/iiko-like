@@ -1,5 +1,4 @@
 import { OrderStatus } from "../../domain/orderStatus";
-import { OrderItem  } from "./order.types";
 
 
 export type OrderWithNameRow = {
@@ -25,7 +24,6 @@ export type OrderWithNameRow = {
     price: number ;
     printed: boolean;
     printed_at: Date | null;
+};
 
-    
 
-}
